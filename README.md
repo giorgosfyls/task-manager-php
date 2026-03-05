@@ -1,4 +1,4 @@
-# Task Manager — Web App
+# Task Manager / Project Management Tool — Web App
 
 A full-stack web application for project and task management, featuring a Kanban board interface. Developed as a capstone project at SAEK (Vocational Training Institute).
 
