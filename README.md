@@ -133,6 +133,7 @@ task-manager-php/
 ├── database/
 │   └── schema.sql          # Table definitions and seed data
 │
+├──.gitignore
 └── README.md
 ```
 
