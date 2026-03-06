@@ -6,13 +6,10 @@ A full-stack web application for project and task management, featuring a Kanban
 
 ## Screenshots
 
-> *(Add screenshots after deployment)*
->
-> Example:
-> ```
-> ![Dashboard](screenshots/dashboard.png)
-> ![Kanban Board](screenshots/kanban.png)
-> ```
+```
+![Dashboard](screenshots/dashboard.png)
+![Kanban Board](screenshots/kanban.png)
+```
 
 ---
 
