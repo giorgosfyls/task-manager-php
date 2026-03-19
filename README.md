@@ -101,7 +101,9 @@ task-manager-php/
 ├── project.html            # Kanban board view
 │
 ├── css/
-│   ├── style.css           # Global stylesheet
+│   ├── auth.css
+│   ├── base.css            # Base for every .html file
+│   ├── dashboard.css
 │   └── kanban.css          # Kanban board styles
 │
 ├── js/
@@ -112,6 +114,7 @@ task-manager-php/
 │
 ├── api/
 │   ├── config/
+│   │   ├── session_check.php
 │   │   └── db.php          # PDO database connection
 │   ├── auth/
 │   │   ├── register.php
@@ -133,6 +136,7 @@ task-manager-php/
 ├── database/
 │   └── schema.sql          # Table definitions and seed data
 │
+├── LICANSE
 └── README.md
 ```
 
