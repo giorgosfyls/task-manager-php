@@ -1,0 +1,205 @@
+/* ============================================================
+   TaskFlow — base.css
+   Reset, CSS Variables, Typography, Base Layout
+
+   Loaded by: ALL pages (via style.css @import)
+   ============================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+
+  /* ── Text colours ───────────────────────────────────────── */
+  --ink:          #0d0f14;   /* near-black  — primary text     */
+  --ink-mid:      #3a3d47;   /* dark grey   — labels           */
+  --ink-soft:     #7a7f8e;   /* mid grey    — secondary text   */
+  --ink-faint:    #b0b5c1;   /* light grey  — placeholders     */
+
+  /* ── Surface colours ────────────────────────────────────── */
+  --surface:      #ffffff;   /* white       — cards, inputs    */
+  --surface-2:    #f7f6f3;   /* off-white   — hover, alt bg    */
+  --bg:           #f2f0eb;   /* warm white  — page background  */
+
+  /* ── Accent ─────────────────────────────────────────────── */
+  --accent:       #e8490f;   /* orange-red  — primary action   */
+  --accent-hover: #d13d08;   /* darker      — hover state      */
+  --accent-dim:   #f0613030; /* 19% opacity — focus ring       */
+  --accent-soft:  #fdf0eb;   /* very light  — tag background   */
+
+  /* ── Semantic colours ───────────────────────────────────── */
+  --green:        #16a34a;
+  --green-bg:     #dcfce7;
+  --green-border: #bbf7d0;
+
+  --red:          #dc2626;
+  --red-bg:       #fee2e2;
+  --red-border:   #fecaca;
+
+  --amber:        #d97706;
+  --amber-bg:     #fef3c7;
+  --amber-border: #fde68a;
+
+  --blue:         #2563eb;
+  --blue-bg:      #eff6ff;
+  --blue-border:  #bfdbfe;
+
+  /* ── Priority ───────────────────────────────────────────── */
+  --priority-high:   #e8490f;
+  --priority-medium: #d97706;
+  --priority-low:    #16a34a;
+
+  /* ── Status ─────────────────────────────────────────────── */
+  --status-todo:        #7a7f8e;
+  --status-in-progress: #2563eb;
+  --status-done:        #16a34a;
+
+  /* ── Borders ────────────────────────────────────────────── */
+  --line:       #d8d4cc;
+  --line-soft:  #ebe8e2;
+
+  /* ── Shadows ────────────────────────────────────────────── */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.05);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.06);
+  --shadow-md: 0 2px 8px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.08);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,.08), 0 16px 48px rgba(0,0,0,.10);
+
+  /* ── Spacing scale ──────────────────────────────────────── */
+  --sp-1:  .25rem;   /*  4px */
+  --sp-2:  .5rem;    /*  8px */
+  --sp-3:  .75rem;   /* 12px */
+  --sp-4:  1rem;     /* 16px */
+  --sp-5:  1.25rem;  /* 20px */
+  --sp-6:  1.5rem;   /* 24px */
+  --sp-8:  2rem;     /* 32px */
+  --sp-10: 2.5rem;   /* 40px */
+  --sp-12: 3rem;     /* 48px */
+
+  /* ── Radius ─────────────────────────────────────────────── */
+  --radius-sm:   6px;
+  --radius:      14px;
+  --radius-lg:   20px;
+  --radius-full: 9999px;
+
+  /* ── Dashboard dimensions ───────────────────────────────── */
+  --sidebar-w:        240px;
+  --sidebar-w-closed:  64px;
+  --topbar-h:          60px;
+}
+
+
+/* ============================================================
+   2. TYPOGRAPHY
+   ============================================================
+   Fonts (loaded in <head> via Google Fonts):
+     Syne    — headings, brand, stat numbers (geometric, bold)
+     DM Sans — body, UI labels, form text (screen-optimised)
+
+   Type scale:
+     .75rem  12px  meta, badges
+     .80rem  13px  labels, field errors
+     .875rem 14px  secondary UI, table cells
+     .9375rem 15px body default
+     1rem    16px  base
+     1.125rem 18px h4, card titles
+     1.25rem 20px  h3
+     1.5rem  24px  h2, page sections
+     1.875rem 30px h1, page titles
+   ============================================================ */
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  height: 100%;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .9375rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--ink);
+  letter-spacing: -.02em;
+}
+
+h1 { font-size: 1.875rem; }
+h2 { font-size: 1.5rem;   }
+h3 { font-size: 1.25rem;  }
+h4 { font-size: 1.125rem; }
+h5 { font-size: 1rem;     }
+h6 { font-size: .875rem;  }
+
+p       { line-height: 1.7; color: var(--ink-mid); }
+a       { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+small   { font-size: .8rem; color: var(--ink-soft); }
+strong  { font-weight: 600; color: var(--ink); }
+
+/* Utility text classes */
+.text-xs      { font-size: .75rem;  }
+.text-sm      { font-size: .875rem; }
+.text-muted   { color: var(--ink-soft);  }
+.text-accent  { color: var(--accent);    }
+.font-syne    { font-family: 'Syne', sans-serif; }
+
+/* Dashboard page & section titles */
+.page-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -.02em;
+}
+
+.section-label {
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+
+/* ============================================================
+   3. BASE LAYOUT
+   ============================================================ */
+
+/* Auth page — two-column split */
+body.page-auth {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 70% 60% at 15% 10%, #e3ddd5 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 85% 90%, #dcd5c8 0%, transparent 55%);
+  overflow: hidden;
+}
+
+/* Dashboard page — sidebar + topbar + main */
+body.page-dashboard {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  grid-template-rows: var(--topbar-h) 1fr;
+  grid-template-areas:
+    "sidebar topbar"
+    "sidebar main";
+  background: var(--bg);
+  transition: grid-template-columns .25s ease;
+}
+
+body.page-dashboard.sidebar-collapsed {
+  grid-template-columns: var(--sidebar-w-closed) 1fr;
+}

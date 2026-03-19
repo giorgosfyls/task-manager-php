@@ -1,0 +1,505 @@
+/* ============================================================
+   TaskFlow — auth.css
+   Login & Register page styles
+
+   Loaded by: index.html (via style.css @import)
+   Depends on: base.css (variables must be loaded first)
+
+   Sections:
+    1. Hero Panel (left side)
+    2. Form Panel (right side)
+    3. Forms & Inputs
+    4. Buttons & States
+   ============================================================ */
+
+/* ============================================================
+   4. AUTH — HERO PANEL
+   ============================================================ */
+
+.panel-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--sp-12);
+  background: var(--ink);
+  overflow: hidden;
+}
+
+.panel-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 0%,  #e8490f22 0%, transparent 55%),
+    radial-gradient(ellipse 60% 70% at 90% 100%, #e8490f18 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.panel-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.hero-brand {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.hero-brand__mark {
+  width: 36px;
+  height: 36px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.hero-brand__mark svg { width: 20px; height: 20px; fill: #fff; }
+
+.hero-brand__name {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -.01em;
+}
+
+.hero-content { position: relative; z-index: 1; }
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: .75rem;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--sp-6);
+}
+
+.hero-eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.4rem, 4vw, 3.2rem);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -.03em;
+  margin-bottom: var(--sp-6);
+}
+
+.hero-title em { font-style: normal; color: var(--accent); }
+
+.hero-desc {
+  font-size: .95rem;
+  line-height: 1.7;
+  color: #8d94a5;
+  max-width: 360px;
+}
+
+.hero-features {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.hero-features li {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  font-size: .875rem;
+  color: #8d94a5;
+}
+
+.hero-features li::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.hero-stat { display: flex; gap: var(--sp-8); margin-top: var(--sp-2); }
+.hero-stat__item { display: flex; flex-direction: column; }
+
+.hero-stat__num {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.hero-stat__label { font-size: .75rem; color: #5c6375; margin-top: .1rem; }
+
+
+/* ============================================================
+   5. AUTH — FORM PANEL
+   ============================================================ */
+
+.panel-auth {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--sp-12) var(--sp-8);
+  overflow-y: auto;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 420px;
+  animation: fadeUp .5s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.auth-tabs {
+  display: flex;
+  background: rgba(0,0,0,.06);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: var(--sp-10);
+}
+
+.auth-tab {
+  flex: 1;
+  padding: .6rem 1rem;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .875rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.auth-tab.active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-xs);
+}
+
+.auth-heading         { margin-bottom: var(--sp-8); }
+.auth-heading h1      { font-size: 1.75rem; letter-spacing: -.02em; margin-bottom: .4rem; }
+.auth-heading p       { font-size: .9rem; color: var(--ink-soft); line-height: 1.5; }
+
+.form-panel           { display: none; }
+.form-panel.active    { display: block; }
+
+.auth-footnote {
+  margin-top: 1.75rem;
+  text-align: center;
+  font-size: .82rem;
+  color: var(--ink-soft);
+}
+
+.auth-footnote a        { color: var(--accent); font-weight: 500; }
+.auth-footnote a:hover  { text-decoration: underline; }
+
+
+/* ============================================================
+   6. AUTH — FORMS & INPUTS
+   ============================================================ */
+
+.auth-form { display: flex; flex-direction: column; gap: 1.1rem; }
+
+.field { display: flex; flex-direction: column; gap: var(--sp-1); }
+
+.field label {
+  font-size: .8rem;
+  font-weight: 500;
+  color: var(--ink-mid);
+  letter-spacing: .01em;
+}
+
+.field-wrap { position: relative; }
+
+/* Leading icon — direct child ONLY, never targets svg inside .btn-eye */
+.field-wrap > svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  stroke: var(--ink-soft);
+  pointer-events: none;
+  transition: stroke .2s;
+}
+
+.field-wrap input {
+  width: 100%;
+  padding: .75rem .9rem .75rem 2.6rem;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .9rem;
+  color: var(--ink);
+  background: var(--surface);
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.field-wrap input::placeholder { color: var(--ink-faint); }
+
+.field-wrap input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.field-wrap:focus-within > svg { stroke: var(--accent); }
+
+.btn-eye {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: grid;
+  place-items: center;
+  color: var(--ink-soft);
+  transition: color .2s;
+}
+
+.btn-eye:hover { color: var(--ink); }
+.btn-eye svg   { width: 18px; height: 18px; stroke: currentColor; }
+
+.field-wrap.has-toggle input { padding-right: 2.8rem; }
+
+.field-wrap input.error {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px #dc262618;
+}
+
+.field-error          { font-size: .78rem; color: var(--red); display: none; }
+.field-error.visible  { display: block; }
+
+.auth-message {
+  display: none;
+  padding: .75rem 1rem;
+  border-radius: 10px;
+  font-size: .875rem;
+  line-height: 1.5;
+  margin-top: var(--sp-1);
+}
+
+.auth-message.success {
+  display: block;
+  background: var(--green-bg);
+  color: var(--green);
+  border: 1px solid var(--green-border);
+}
+
+.auth-message.error {
+  display: block;
+  background: var(--red-bg);
+  color: var(--red);
+  border: 1px solid var(--red-border);
+}
+
+
+/* ============================================================
+   7. AUTH — BUTTONS & STATES
+   ============================================================ */
+
+.btn-submit {
+  margin-top: var(--sp-1);
+  width: 100%;
+  padding: .85rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  cursor: pointer;
+  transition: background .2s, transform .15s, box-shadow .2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-submit::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.btn-submit:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 4px 20px rgba(232,73,15,.4);
+  transform: translateY(-1px);
+}
+
+.btn-submit:active   { transform: translateY(0); }
+
+.btn-submit:disabled {
+  background: #c0bdb8;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-submit .spinner {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.btn-submit.loading .btn-label { display: none; }
+.btn-submit.loading .spinner   { display: block; }
+
+
+/* ============================================================
+   8. DASHBOARD — SHELL
+   ============================================================ */
+
+.sidebar {
+  grid-area: sidebar;
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+  z-index: 100;
+  transition: width .25s ease;
+}
+
+.topbar {
+  grid-area: topbar;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line-soft);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--sp-6);
+  gap: var(--sp-4);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.main-content {
+  grid-area: main;
+  padding: var(--sp-8);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+}
+
+
+/* ============================================================
+   9. DASHBOARD — SIDEBAR
+   ============================================================ */
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-5);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  flex-shrink: 0;
+}
+
+.sidebar__brand-mark {
+  width: 32px;
+  height: 32px;
+  background: var(--accent);
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.sidebar__brand-mark svg { width: 18px; height: 18px; fill: #fff; }
+
+.sidebar__brand-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.sidebar__nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--sp-4) var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.sidebar__nav::-webkit-scrollbar        { width: 4px; }
+.sidebar__nav::-webkit-scrollbar-track  { background: transparent; }
+.sidebar__nav::-webkit-scrollbar-thumb  { background: rgba(255,255,255,.1); border-radius: 2px; }
+
+.sidebar__group-label {
+  font-size: .65rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.25);
+  padding: var(--sp-3) var(--sp-3) var(--sp-1);
+  white-space: nowrap;
+}
+
+.sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-sm);
+  color: rgba(255,255,255,.55);
+  font-size: .875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+  white-space: nowrap;
+  text-decoration: none;
+  width: 100%;
+  text-align: left;
+}

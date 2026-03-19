@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskFlow — Sign In</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════
+       LEFT — Hero panel
+  ═══════════════════════════════════════ -->
+  <aside class="panel-hero" aria-hidden="true">
+
+    <!-- Brand -->
+    <header class="hero-brand">
+      <div class="hero-brand__mark">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+      <span class="hero-brand__name">TaskFlow</span>
+    </header>
+
+    <!-- Main copy -->
+    <div class="hero-content">
+      <p class="hero-eyebrow">Project Management</p>
+      <h2 class="hero-title">Organize<br/>your work<br/><em>the right way.</em></h2>
+      <p class="hero-desc">
+        Kanban boards, team collaboration and real-time tracking —
+        all in one tool that keeps you focused.
+      </p>
+      <div class="hero-stat" style="margin-top:2rem">
+        <div class="hero-stat__item">
+          <span class="hero-stat__num">100%</span>
+          <span class="hero-stat__label">Free</span>
+        </div>
+        <div class="hero-stat__item">
+          <span class="hero-stat__num">∞</span>
+          <span class="hero-stat__label">Projects</span>
+        </div>
+        <div class="hero-stat__item">
+          <span class="hero-stat__num">PHP</span>
+          <span class="hero-stat__label">Powered</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature bullets -->
+    <ul class="hero-features" role="list">
+      <li>Drag &amp; drop Kanban board</li>
+      <li>Comments and task assignment</li>
+      <li>Secure PHP session authentication</li>
+      <li>MySQL — full change history</li>
+    </ul>
+
+  </aside>
+
+
+  <!-- ═══════════════════════════════════════
+       RIGHT — Auth panel
+  ═══════════════════════════════════════ -->
+  <main class="panel-auth">
+    <div class="auth-container" role="region" aria-label="Login and registration form">
+
+      <!-- Tab switcher -->
+      <nav class="auth-tabs" role="tablist" aria-label="Select form">
+        <button
+          class="auth-tab active"
+          role="tab"
+          aria-selected="true"
+          aria-controls="panel-login"
+          id="tab-login"
+          data-target="login"
+        >Sign In</button>
+        <button
+          class="auth-tab"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-register"
+          id="tab-register"
+          data-target="register"
+        >Sign Up</button>
+      </nav>
+
+
+      <!-- ── LOGIN PANEL ──────────────────────── -->
+      <section
+        class="form-panel active"
+        id="panel-login"
+        role="tabpanel"
+        aria-labelledby="tab-login"
+      >
+        <header class="auth-heading">
+          <h1>Welcome back!</h1>
+          <p>Sign in to your account to continue.</p>
+        </header>
+
+        <form id="form-login" method="POST" novalidate aria-label="Sign in form" class="auth-form">
+
+          <!-- Email -->
+          <div class="field">
+            <label for="login-email">Email</label>
+            <div class="field-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="M2 7l10 7 10-7"/>
+              </svg>
+              <input
+                type="email"
+                id="login-email"
+                name="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+                aria-required="true"
+                aria-describedby="login-email-error"
+              />
+            </div>
+            <span class="field-error" id="login-email-error" role="alert" aria-live="polite"></span>
+          </div>
+
+          <!-- Password -->
+          <div class="field">
+            <label for="login-password">Password</label>
+            <div class="field-wrap has-toggle">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <input
+                type="password"
+                id="login-password"
+                name="password"
+                placeholder="Your password"
+                autocomplete="current-password"
+                required
+                aria-required="true"
+                aria-describedby="login-password-error"
+              />
+              <button type="button" class="btn-eye" aria-label="Toggle password visibility" data-target="login-password">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-eye" aria-hidden="true">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <span class="field-error" id="login-password-error" role="alert" aria-live="polite"></span>
+          </div>
+
+          <!-- Server message -->
+          <div class="auth-message" id="login-message" role="status" aria-live="polite"></div>
+
+          <!-- Submit -->
+          <button type="submit" class="btn-submit" id="btn-login">
+            <span class="btn-label">Sign In</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+
+        </form>
+
+        <p class="auth-footnote">
+          Don't have an account?
+          <a href="#" id="link-to-register">Sign up now</a>
+        </p>
+      </section>
+
+
+      <!-- ── REGISTER PANEL ───────────────────── -->
+      <section
+        class="form-panel"
+        id="panel-register"
+        role="tabpanel"
+        aria-labelledby="tab-register"
+        aria-hidden="true"
+      >
+        <header class="auth-heading">
+          <h1>Create an account</h1>
+          <p>It's free and only takes a minute.</p>
+        </header>
+
+        <form id="form-register" method="POST" novalidate aria-label="Registration form" class="auth-form">
+
+          <!-- Username -->
+          <div class="field">
+            <label for="reg-username">Username</label>
+            <div class="field-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              <input
+                type="text"
+                id="reg-username"
+                name="username"
+                placeholder="cooluser123"
+                autocomplete="username"
+                required
+                aria-required="true"
+                minlength="3"
+                maxlength="50"
+                aria-describedby="reg-username-error"
+              />
+            </div>
+            <span class="field-error" id="reg-username-error" role="alert" aria-live="polite"></span>
+          </div>
+
+          <!-- Email -->
+          <div class="field">
+            <label for="reg-email">Email</label>
+            <div class="field-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="M2 7l10 7 10-7"/>
+              </svg>
+              <input
+                type="email"
+                id="reg-email"
+                name="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+                aria-required="true"
+                aria-describedby="reg-email-error"
+              />
+            </div>
+            <span class="field-error" id="reg-email-error" role="alert" aria-live="polite"></span>
+          </div>
+
+          <!-- Password -->
+          <div class="field">
+            <label for="reg-password">Password</label>
+            <div class="field-wrap has-toggle">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <input
+                type="password"
+                id="reg-password"
+                name="password"
+                placeholder="At least 6 characters"
+                autocomplete="new-password"
+                required
+                aria-required="true"
+                minlength="6"
+                aria-describedby="reg-password-error reg-password-hint"
+              />
+              <button type="button" class="btn-eye" aria-label="Toggle password visibility" data-target="reg-password">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-eye" aria-hidden="true">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <span class="field-error" id="reg-password-error" role="alert" aria-live="polite"></span>
+            <span id="reg-password-hint" style="font-size:.78rem; color:var(--ink-soft); display:none">
+              At least 6 characters
+            </span>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="field">
+            <label for="reg-confirm">Confirm password</label>
+            <div class="field-wrap has-toggle">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <input
+                type="password"
+                id="reg-confirm"
+                name="confirm_password"
+                placeholder="Repeat your password"
+                autocomplete="new-password"
+                required
+                aria-required="true"
+                aria-describedby="reg-confirm-error"
+              />
+              <button type="button" class="btn-eye" aria-label="Toggle password visibility" data-target="reg-confirm">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-eye" aria-hidden="true">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <span class="field-error" id="reg-confirm-error" role="alert" aria-live="polite"></span>
+          </div>
+
+          <!-- Server message -->
+          <div class="auth-message" id="register-message" role="status" aria-live="polite"></div>
+
+          <!-- Submit -->
+          <button type="submit" class="btn-submit" id="btn-register">
+            <span class="btn-label">Create account</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+
+        </form>
+
+        <p class="auth-footnote">
+          Already have an account?
+          <a href="#" id="link-to-login">Sign in here</a>
+        </p>
+      </section>
+
+    </div><!-- /.auth-container -->
+  </main>
+
+  <!-- JavaScript -->
+  <script src="js/auth.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,819 @@
+/* ============================================================
+   TaskFlow — dashboard.css
+   Dashboard page styles
+
+   Loaded by: dashboard.html (via style.css @import)
+   Depends on: base.css (variables must be loaded first)
+
+   Sections:
+    1. Shell (sidebar + topbar + main grid)
+    2. Sidebar
+    3. Top Bar
+    4. Stat Cards
+    5. Project List & Cards
+    6. Task Items
+    7. Badges & Tags
+    8. Utilities
+    9. Responsive
+   ============================================================ */
+
+.sidebar__link svg       { width: 18px; height: 18px; stroke: currentColor; flex-shrink: 0; }
+.sidebar__link:hover     { background: rgba(255,255,255,.06); color: rgba(255,255,255,.85); text-decoration: none; }
+.sidebar__link.active    { background: var(--accent); color: #fff; }
+
+.sidebar__badge {
+  margin-left: auto;
+  background: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.7);
+  font-size: .7rem;
+  font-weight: 600;
+  padding: .1rem .45rem;
+  border-radius: var(--radius-full);
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+
+.sidebar__link.active .sidebar__badge { background: rgba(255,255,255,.25); color: #fff; }
+
+.sidebar__footer {
+  padding: var(--sp-4) var(--sp-3);
+  border-top: 1px solid rgba(255,255,255,.06);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-shrink: 0;
+}
+
+.sidebar__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: grid;
+  place-items: center;
+  font-family: 'Syne', sans-serif;
+  font-size: .75rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.sidebar__user-name {
+  font-size: .875rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* ============================================================
+   10. DASHBOARD — TOP BAR
+   ============================================================ */
+
+.topbar__toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--sp-2);
+  color: var(--ink-soft);
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  transition: background .15s, color .15s;
+  flex-shrink: 0;
+}
+
+.topbar__toggle:hover { background: var(--surface-2); color: var(--ink); }
+.topbar__toggle svg   { width: 20px; height: 20px; stroke: currentColor; }
+
+.topbar__search {
+  flex: 1;
+  max-width: 400px;
+  position: relative;
+}
+
+.topbar__search svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  stroke: var(--ink-soft);
+  pointer-events: none;
+}
+
+.topbar__search input {
+  width: 100%;
+  padding: .45rem .75rem .45rem 2.2rem;
+  border: 1.5px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .875rem;
+  color: var(--ink);
+  background: var(--surface-2);
+  outline: none;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+.topbar__search input::placeholder { color: var(--ink-faint); }
+
+.topbar__search input:focus {
+  background: var(--surface);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-left: auto;
+}
+
+.topbar__btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+  color: var(--ink-soft);
+  transition: background .15s, color .15s;
+  position: relative;
+}
+
+.topbar__btn:hover { background: var(--surface-2); color: var(--ink); }
+.topbar__btn svg   { width: 20px; height: 20px; stroke: currentColor; }
+
+/* Notification dot */
+.topbar__btn--notify::after {
+  content: '';
+  position: absolute;
+  top: 7px; right: 7px;
+  width: 7px; height: 7px;
+  background: var(--accent);
+  border-radius: 50%;
+  border: 1.5px solid var(--surface);
+}
+
+.topbar__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: grid;
+  place-items: center;
+  font-family: 'Syne', sans-serif;
+  font-size: .75rem;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+
+/* ============================================================
+   11. DASHBOARD — STAT CARDS
+   ============================================================ */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-4);
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  padding: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .2s, transform .2s;
+}
+
+.stat-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.stat-card__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+}
+
+.stat-card__icon svg { width: 20px; height: 20px; stroke: currentColor; }
+
+.stat-card__icon--accent { background: var(--accent-soft); color: var(--accent); }
+.stat-card__icon--green  { background: var(--green-bg);    color: var(--green);  }
+.stat-card__icon--blue   { background: var(--blue-bg);     color: var(--blue);   }
+.stat-card__icon--amber  { background: var(--amber-bg);    color: var(--amber);  }
+
+.stat-card__label {
+  font-size: .8rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.stat-card__value {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1;
+  letter-spacing: -.03em;
+}
+
+.stat-card__delta {
+  font-size: .78rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+}
+
+.stat-card__delta--up   { color: var(--green); }
+.stat-card__delta--down { color: var(--red);   }
+
+
+/* ============================================================
+   12. DASHBOARD — PROJECT LIST
+   ============================================================ */
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-4);
+}
+
+.section-header h2 { font-size: 1.125rem; }
+
+/* Primary small button */
+.btn-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: .45rem .9rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, box-shadow .2s, transform .15s;
+}
+
+.btn-sm:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 2px 12px rgba(232,73,15,.35);
+  transform: translateY(-1px);
+}
+
+.btn-sm svg { width: 14px; height: 14px; stroke: currentColor; }
+
+/* Ghost variant */
+.btn-sm--ghost {
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1.5px solid var(--line);
+}
+
+.btn-sm--ghost:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+  box-shadow: none;
+  transform: none;
+}
+
+/* Project card */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-4);
+}
+
+.project-card {
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  padding: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .2s, transform .2s;
+  cursor: pointer;
+}
+
+.project-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+.project-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-4);
+}
+
+.project-card__title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -.01em;
+}
+
+.project-card__desc {
+  font-size: .85rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  margin-top: var(--sp-1);
+}
+
+/* Colour dot (project colour indicator) */
+.project-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+/* Progress bar */
+.project-progress { display: flex; flex-direction: column; gap: var(--sp-1); }
+
+.project-progress__label {
+  display: flex;
+  justify-content: space-between;
+  font-size: .75rem;
+  color: var(--ink-soft);
+}
+
+.project-progress__bar {
+  height: 5px;
+  background: var(--line-soft);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.project-progress__fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: var(--radius-full);
+  transition: width .4s ease;
+}
+
+/* Stacked member avatars */
+.project-members { display: flex; align-items: center; }
+
+.project-members__avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  display: grid;
+  place-items: center;
+  font-family: 'Syne', sans-serif;
+  font-size: .6rem;
+  font-weight: 700;
+  color: #fff;
+  margin-left: -8px;
+  flex-shrink: 0;
+}
+
+.project-members__avatar:first-child { margin-left: 0; }
+
+.project-members__more {
+  margin-left: -8px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 2px solid var(--surface);
+  display: grid;
+  place-items: center;
+  font-size: .6rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+
+/* ============================================================
+   13. DASHBOARD — TASK ITEMS
+   ============================================================ */
+
+.task-list { display: flex; flex-direction: column; gap: var(--sp-2); }
+
+.task-item {
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-3) var(--sp-4);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  transition: box-shadow .15s, border-color .15s;
+  cursor: pointer;
+}
+
+.task-item:hover { border-color: var(--line); box-shadow: var(--shadow-sm); }
+
+.task-item__check {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--line);
+  border-radius: 4px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  transition: border-color .15s, background .15s;
+  cursor: pointer;
+}
+
+.task-item__check:hover { border-color: var(--accent); }
+
+.task-item.done .task-item__check {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.task-item.done .task-item__check::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 6l3 3 5-5'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.task-item__title {
+  flex: 1;
+  font-size: .9rem;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.task-item.done .task-item__title {
+  color: var(--ink-soft);
+  text-decoration: line-through;
+}
+
+.task-item__due           { font-size: .75rem; color: var(--ink-faint); flex-shrink: 0; }
+.task-item__due--overdue  { color: var(--red); font-weight: 500; }
+
+
+/* ============================================================
+   14. BADGES & TAGS
+   ============================================================ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .2rem .55rem;
+  border-radius: var(--radius-full);
+  font-size: .72rem;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+/* Status */
+.badge--todo        { background: #f1f1f3;         color: var(--status-todo);        }
+.badge--in-progress { background: var(--blue-bg);  color: var(--status-in-progress); border: 1px solid var(--blue-border);  }
+.badge--done        { background: var(--green-bg); color: var(--status-done);        border: 1px solid var(--green-border); }
+
+/* Priority */
+.badge--high   { background: var(--accent-soft); color: var(--priority-high);   }
+.badge--medium { background: var(--amber-bg);    color: var(--priority-medium); }
+.badge--low    { background: var(--green-bg);    color: var(--priority-low);    }
+
+/* Priority dot */
+.priority-dot              { display: inline-block; width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.priority-dot--high        { background: var(--priority-high);   }
+.priority-dot--medium      { background: var(--priority-medium); }
+.priority-dot--low         { background: var(--priority-low);    }
+
+
+/* ============================================================
+   15. UTILITIES
+   ============================================================ */
+
+.flex             { display: flex; }
+.flex-col         { display: flex; flex-direction: column; }
+.items-center     { align-items: center; }
+.justify-between  { justify-content: space-between; }
+.gap-2  { gap: var(--sp-2); }
+.gap-3  { gap: var(--sp-3); }
+.gap-4  { gap: var(--sp-4); }
+.mt-4   { margin-top: var(--sp-4); }
+.mt-6   { margin-top: var(--sp-6); }
+.mt-8   { margin-top: var(--sp-8); }
+.mb-4   { margin-bottom: var(--sp-4); }
+
+.divider {
+  height: 1px;
+  background: var(--line-soft);
+  border: none;
+  margin: var(--sp-6) 0;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar              { width: 6px; height: 6px; }
+::-webkit-scrollbar-track        { background: transparent; }
+::-webkit-scrollbar-thumb        { background: var(--line); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover  { background: var(--ink-soft); }
+
+/* Keyboard focus ring */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+
+/* ============================================================
+   16. RESPONSIVE
+   ============================================================
+
+   Breakpoints:
+     4K      ≥ 2560px  — max-width container, larger type
+     Desktop  1024–2559px  — default (no query needed)
+     Tablet   768–1023px  — sidebar icon-only, 2-col stats
+     Mobile   480–767px   — no sidebar, bottom search bar
+     XS       < 480px     — single column everything
+
+   Mobile search:
+     Αντί να κρύψουμε το search bar στο mobile, το μεταφέρουμε
+     κάτω από το topbar ως sticky search strip.
+   ============================================================ */
+
+
+/* ── 4K / Large screens (≥ 2560px) ─────────────────────────── */
+@media (min-width: 2560px) {
+
+  :root {
+    --sidebar-w: 300px;   /* φαρδύτερη sidebar */
+    --topbar-h:  72px;    /* ψηλότερο topbar   */
+  }
+
+  /* Auth: περιορισμένο max-width στη φόρμα για αναγνωσιμότητα */
+  body.page-auth {
+    grid-template-columns: 1fr 1.2fr;  /* φόρμα ελαφρώς φαρδύτερη */
+  }
+
+  .auth-container { max-width: 520px; }
+
+  /* Dashboard: μεγαλύτερα grids */
+  .stats-grid    { grid-template-columns: repeat(4, 1fr); gap: var(--sp-6); }
+  .projects-grid { grid-template-columns: repeat(4, 1fr); gap: var(--sp-6); }
+
+  /* Μεγαλύτερη typography */
+  .page-title         { font-size: 2rem; }
+  .stat-card__value   { font-size: 2.5rem; }
+  .project-card__title{ font-size: 1.125rem; }
+
+  /* Μεγαλύτερα cards */
+  .stat-card    { padding: var(--sp-6); }
+  .project-card { padding: var(--sp-6); }
+
+  /* Topbar search φαρδύτερο */
+  .topbar__search { max-width: 600px; }
+
+  /* Μεγαλύτερος scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+}
+
+
+/* ── Tablet (768px – 1023px) ────────────────────────────────── */
+@media (max-width: 1023px) {
+
+  /* ── Auth: single column ── */
+  body.page-auth {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    overflow: auto;
+  }
+
+  .panel-hero    { padding: var(--sp-8); min-height: auto; }
+  .hero-title    { font-size: 2.2rem; }
+  .hero-desc     { display: none; }      /* κρύβει μόνο desc, κρατά features */
+  .hero-content  { margin: var(--sp-5) 0; }
+  .panel-auth    { padding: var(--sp-8) var(--sp-6) var(--sp-12); }
+
+  /* ── Dashboard: icon-rail sidebar (64px) ── */
+  body.page-dashboard {
+    grid-template-columns: var(--sidebar-w-closed) 1fr;
+  }
+
+  /* Κρύβε text — κράτα icons */
+  .sidebar__brand-name,
+  .sidebar__group-label,
+  .sidebar__link span,
+  .sidebar__badge,
+  .sidebar__user-name { display: none; }
+
+  .sidebar__link  { justify-content: center; }
+  .sidebar__brand { justify-content: center; }
+  .sidebar__footer{ justify-content: center; }
+
+  /* Stats: 2x2 */
+  .stats-grid    { grid-template-columns: repeat(2, 1fr); }
+
+  /* Projects: 2 columns */
+  .projects-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .main-content  { padding: var(--sp-6); gap: var(--sp-6); }
+
+  /* Topbar search λίγο μικρότερο */
+  .topbar__search { max-width: 280px; }
+}
+
+
+/* ── Mobile search strip ────────────────────────────────────── */
+/*
+  Σε mobile (< 768px) δεν κρύβουμε το search — το μεταφέρουμε
+  σε ένα sticky strip κάτω από το topbar. Χρειάζεται το
+  .mobile-search element στο dashboard.html (βλ. σχόλιο HTML).
+*/
+.mobile-search {
+  display: none;  /* κρυφό by default (desktop) */
+}
+
+@media (max-width: 767px) {
+
+  /* ── Auth: single column ── */
+  body.page-auth {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    overflow: auto;
+  }
+
+  .panel-hero    { padding: var(--sp-6); min-height: auto; }
+  .hero-title    { font-size: 1.8rem; }
+  .hero-desc,
+  .hero-features { display: none; }
+  .hero-content  { margin: var(--sp-4) 0; }
+  .hero-stat     { gap: var(--sp-6); }
+  .panel-auth    { padding: var(--sp-6) var(--sp-4) var(--sp-12); }
+
+  /* ── Dashboard: NO sidebar — fullscreen content ── */
+  body.page-dashboard {
+    grid-template-columns: 1fr;
+    grid-template-rows: var(--topbar-h) auto 1fr;
+    grid-template-areas:
+      "topbar"
+      "search"      /* νέα γραμμή για mobile search */
+      "main";
+  }
+
+  /* Sidebar: κρυμμένη εντελώς, ανοίγει ως overlay με JS */
+  .sidebar {
+    position: fixed;
+    left: -100%;          /* έξω από οθόνη */
+    top: 0;
+    width: var(--sidebar-w);
+    height: 100dvh;
+    z-index: 200;
+    transition: left .25s ease;  /* slide-in από αριστερά */
+  }
+
+  /* Κλάση που βάζει το JS για να ανοίξει το overlay sidebar */
+  .sidebar.open {
+    left: 0;
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Overlay backdrop — κλικ κλείνει το sidebar */
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 199;
+  }
+
+  .sidebar-backdrop.visible { display: block; }
+
+  /* Επαναφορά sidebar text (φαίνεται στο overlay) */
+  .sidebar__brand-name,
+  .sidebar__group-label,
+  .sidebar__link span,
+  .sidebar__badge,
+  .sidebar__user-name { display: revert; }
+
+  .sidebar__link  { justify-content: flex-start; }
+  .sidebar__brand { justify-content: flex-start; }
+  .sidebar__footer{ justify-content: flex-start; }
+
+  /* Topbar: κρύψε desktop search */
+  .topbar__search { display: none; }
+
+  /* Mobile search strip — εμφανίζεται κάτω από topbar */
+  .mobile-search {
+    grid-area: search;
+    display: flex;
+    align-items: center;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line-soft);
+    padding: var(--sp-2) var(--sp-4);
+    position: sticky;
+    top: var(--topbar-h);
+    z-index: 40;
+  }
+
+  .mobile-search svg {
+    position: absolute;
+    left: calc(var(--sp-4) + 10px);
+    width: 16px;
+    height: 16px;
+    stroke: var(--ink-soft);
+    pointer-events: none;
+  }
+
+  .mobile-search input {
+    width: 100%;
+    padding: .5rem .75rem .5rem 2.2rem;
+    border: 1.5px solid var(--line-soft);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem;
+    color: var(--ink);
+    background: var(--surface-2);
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+
+  .mobile-search input:focus {
+    background: var(--surface);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+  }
+
+  .mobile-search input::placeholder { color: var(--ink-faint); }
+
+  /* Main content: full width, less padding */
+  .main-content { padding: var(--sp-4); gap: var(--sp-5); }
+
+  /* Stats: 2x2 */
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: var(--sp-3); }
+
+  /* Projects: 1 column */
+  .projects-grid { grid-template-columns: 1fr; }
+
+  /* Topbar: μικρότερα gaps */
+  .topbar { padding: 0 var(--sp-4); gap: var(--sp-2); }
+
+  /* Sections: τίτλοι μικρότεροι */
+  .section-header h2 { font-size: 1rem; }
+  .page-title        { font-size: 1.25rem; }
+}
+
+
+/* ── XS / Small Mobile (< 480px) ───────────────────────────── */
+@media (max-width: 479px) {
+
+  /* Auth */
+  .panel-hero  { padding: var(--sp-5); }
+  .hero-title  { font-size: 1.6rem; }
+  .hero-stat   { gap: var(--sp-4); }
+  .panel-auth  { padding: var(--sp-5) var(--sp-3) var(--sp-10); }
+  .auth-tabs   { margin-bottom: var(--sp-6); }
+
+  /* Dashboard */
+  .main-content { padding: var(--sp-3); gap: var(--sp-4); }
+
+  /* Stats: 2 columns, compact */
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-2);
+  }
+
+  .stat-card         { padding: var(--sp-3); gap: var(--sp-2); }
+  .stat-card__value  { font-size: 1.5rem; }
+  .stat-card__icon   { width: 32px; height: 32px; }
+  .stat-card__delta  { display: none; }  /* κρύψε trend στο πολύ μικρό */
+
+  /* Task items: μικρότερο padding */
+  .task-item { padding: var(--sp-2) var(--sp-3); }
+
+  /* Project cards: compact */
+  .project-card { padding: var(--sp-4); gap: var(--sp-3); }
+
+  /* Buttons */
+  .btn-sm { padding: .4rem .7rem; font-size: .75rem; }
+}
