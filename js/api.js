@@ -12,7 +12,7 @@
      - Parse JSON response automatically
      - Throw a consistent error object on failure:
        { status: 401, message: "Not authenticated" }
-     - Redirect to index.html on 401 (session expired)
+     - Redirect to index.html on 401 (session expired or not logged in)
    ============================================================ */
 
 
