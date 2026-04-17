@@ -1,5 +1,17 @@
 # Task Manager — PHP & MySQL
 
+![HTML5](https://img.shields.io/badge/HTML5-orange?logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-blue?logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-yellow?logo=javascript&logoColor=black)
+![PHP](https://img.shields.io/badge/PHP-purple?logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-blue?logo=mysql&logoColor=white)
+![Git](https://img.shields.io/badge/Git-orange?logo=git&logoColor=white)
+![Last commit](https://img.shields.io/github/last-commit/giorg1s/task-manager-php)
+![GitHub stars](https://img.shields.io/github/stars/giorg1s/blackjack?style=social)
+![GitHub forks](https://img.shields.io/github/forks/giorg1s/blackjack?style=social)
+![GitHub repo size](https://img.shields.io/github/repo-size/giorg1s/task-manager-php)
+![Top language](https://img.shields.io/github/languages/top/giorg1s/task-manager-php)
+
 A full-stack web application for project and task management, featuring a Kanban board interface. Developed as a capstone project at SAEK (Vocational Training Institute).
 
 ---
@@ -123,7 +135,8 @@ task-manager-php/
 │   ├── projects/
 │   │   ├── list.php
 │   │   ├── create.php
-│   │   └── delete.php
+│   │   ├── delete.php
+│   │   └── members.php
 │   ├── tasks/
 │   │   ├── list.php
 │   │   ├── create.php
