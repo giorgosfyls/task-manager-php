@@ -1,94 +1,146 @@
 <?php
+/**
+ * tasks/update.php — Update one or more fields of a task
+ *
+ * Method : POST
+ * Body   : { id: int, [title], [status], [priority], [due_date], [assigned_to] }
+ * Returns: 200 { message }
+ *          400 { error } — missing id or invalid field values
+ *          403 { error } — user is not a project member
+ *          404 { error } — task not found
+ *          500 { error } — database error
+ *
+ * Design: Only fields present in the request body are updated
+ * (partial update / PATCH semantics over POST).
+ *
+ * Security:
+ *   - Project membership verified before any write
+ *   - All values validated against whitelists (status, priority)
+ *   - Dynamic query built with parameterised values only — no raw input
+ *     concatenated into SQL
+ */
 
-header("Content-Type: application/json");
+header('Content-Type: application/json');
 
-require "../config/session_check.php";
-require "../config/db.php";
+require '../config/session_check.php';
+require '../config/db.php';
 
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+// ── Method guard ───────────────────────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    echo json_encode(["error" => "Method not allowed"]);
+    echo json_encode(['error' => 'Method not allowed']);
     exit;
 }
 
-$data = json_decode(file_get_contents("php://input"), true);
+// ── Parse body ─────────────────────────────────────────────────
+$data = json_decode(file_get_contents('php://input'), true);
 
-// 1. Check required field
-if (!isset($data["id"]) || !is_numeric($data["id"])) {
+if (empty($data['id']) || !is_numeric($data['id'])) {
     http_response_code(400);
-    echo json_encode(["error" => "Task ID is required"]);
+    echo json_encode(['error' => 'Task ID is required']);
     exit;
 }
 
-$taskId = (int) $data["id"];
-$userId = $_SESSION["user_id"];
+$taskId = (int) $data['id'];
+$userId = (int) $_SESSION['user_id'];
 
-$validStatuses   = ["todo", "in_progress", "done"];
-$validPriorities = ["low", "medium", "high"];
+// ── Allowed value sets ─────────────────────────────────────────
+const VALID_STATUSES    = ['todo', 'in_progress', 'done'];
+const VALID_PRIORITIES  = ['low', 'medium', 'high'];
 
 try {
-    // 2. Fetch task + verify access via project membership
-    $check = $pdo->prepare("
-        SELECT t.id, t.project_id, t.status, t.priority,
-               t.assigned_to, t.title
-        FROM tasks t
-        JOIN project_members pm ON pm.project_id = t.project_id
-                                AND pm.user_id   = :user_id
-        WHERE t.id = :task_id
-    ");
-    $check->execute([":task_id" => $taskId, ":user_id" => $userId]);
-    $task = $check->fetch(PDO::FETCH_ASSOC);
+    // ── Verify access: user must be a project member ───────────
+    $check = $pdo->prepare('
+        SELECT t.id, t.project_id
+        FROM   tasks t
+        JOIN   project_members pm
+               ON  pm.project_id = t.project_id
+               AND pm.user_id    = :user_id
+        WHERE  t.id = :task_id
+    ');
+    $check->execute([':task_id' => $taskId, ':user_id' => $userId]);
 
-    if (!$task) {
+    if (!$check->fetch()) {
         http_response_code(404);
-        echo json_encode(["error" => "Task not found or access denied"]);
+        echo json_encode(['error' => 'Task not found or access denied']);
         exit;
     }
 
-    // 3. Build dynamic UPDATE — only fields sent in the request
+    // ── Build dynamic SET clause ───────────────────────────────
     $fields = [];
-    $params = [":task_id" => $taskId];
+    $params = [':task_id' => $taskId];
 
-    if (isset($data["status"])) {
-        if (!in_array($data["status"], $validStatuses)) {
+    // Title
+    if (isset($data['title'])) {
+        $title = trim($data['title']);
+        if ($title === '') {
             http_response_code(400);
-            echo json_encode(["error" => "Invalid status"]);
+            echo json_encode(['error' => 'Title cannot be empty']);
             exit;
         }
-        $fields[] = "status = :status";
-        $params[":status"] = $data["status"];
-    }
-
-    if (isset($data["priority"])) {
-        if (!in_array($data["priority"], $validPriorities)) {
+        if (strlen($title) > 150) {
             http_response_code(400);
-            echo json_encode(["error" => "Invalid priority"]);
+            echo json_encode(['error' => 'Title must be 150 characters or less']);
             exit;
         }
-        $fields[] = "priority = :priority";
-        $params[":priority"] = $data["priority"];
+        $fields[]          = 'title = :title';
+        $params[':title']  = $title;
     }
 
-    if (array_key_exists("assigned_to", $data)) {
-        // null = unassign
-        $fields[] = "assigned_to = :assigned_to";
-        $params[":assigned_to"] = $data["assigned_to"] ? (int) $data["assigned_to"] : null;
+    // Status
+    if (isset($data['status'])) {
+        if (!in_array($data['status'], VALID_STATUSES, true)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid status value']);
+            exit;
+        }
+        $fields[]           = 'status = :status';
+        $params[':status']  = $data['status'];
+    }
+
+    // Priority
+    if (isset($data['priority'])) {
+        if (!in_array($data['priority'], VALID_PRIORITIES, true)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid priority value']);
+            exit;
+        }
+        $fields[]             = 'priority = :priority';
+        $params[':priority']  = $data['priority'];
+    }
+
+    // Due date (null = clear the date)
+    if (array_key_exists('due_date', $data)) {
+        $dueDate = $data['due_date'];
+        if ($dueDate !== null && !strtotime((string) $dueDate)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid due_date format']);
+            exit;
+        }
+        $fields[]             = 'due_date = :due_date';
+        $params[':due_date']  = $dueDate;
+    }
+
+    // Assigned to (null = unassign)
+    if (array_key_exists('assigned_to', $data)) {
+        $fields[]                = 'assigned_to = :assigned_to';
+        $params[':assigned_to']  = $data['assigned_to'] ? (int) $data['assigned_to'] : null;
     }
 
     if (empty($fields)) {
         http_response_code(400);
-        echo json_encode(["error" => "No fields to update"]);
+        echo json_encode(['error' => 'No fields to update']);
         exit;
     }
 
-    // 4. Execute dynamic UPDATE
-    $sql = "UPDATE tasks SET " . implode(", ", $fields) . " WHERE id = :task_id";
+    // ── Execute update ─────────────────────────────────────────
+    $sql  = 'UPDATE tasks SET ' . implode(', ', $fields) . ' WHERE id = :task_id';
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
 
-    echo json_encode(["message" => "Task updated successfully"]);
+    echo json_encode(['message' => 'Task updated successfully']);
 
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(["error" => "Failed to update task"]);
+    echo json_encode(['error' => 'Failed to update task']);
 }

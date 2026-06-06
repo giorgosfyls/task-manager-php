@@ -1,27 +1,55 @@
 <?php
+/**
+ * logout.php — Destroy the current user session
+ *
+ * Method : POST
+ * Body   : (empty)
+ * Returns: 200 { message }
+ *
+ * Steps:
+ *   1. Clear all session variables
+ *   2. Expire the session cookie in the browser
+ *   3. Destroy the server-side session
+ */
 
-header("Content-Type: application/json");
+header('Content-Type: application/json');
 
-require "../config/session_check.php";
+// ── Method guard ───────────────────────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['error' => 'Method not allowed']);
+    exit;
+}
 
-// 1. Clear all session variables
-$_SESSION = [];
+// Session cookie params must match login.php and session_check.php
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path'     => '/',
+    'secure'   => false,
+    'httponly' => true,
+    'samesite' => 'Strict',
+]);
 
-// 2. Destroy the session cookie
-if (ini_get("session.use_cookies")) {
+session_start();
+
+// ── 1. Clear all session variables ────────────────────────────
+session_unset();
+
+// ── 2. Expire the session cookie in the browser ───────────────
+if (ini_get('session.use_cookies')) {
     $params = session_get_cookie_params();
     setcookie(
         session_name(),
         '',
-        time() - 42000,
-        $params["path"],
-        $params["domain"],
-        $params["secure"],
-        $params["httponly"]
+        time() - 3600,         // Set expiry in the past
+        $params['path'],
+        $params['domain'],
+        $params['secure'],
+        $params['httponly']
     );
 }
 
-// 3. Destroy the session
+// ── 3. Destroy the server-side session ────────────────────────
 session_destroy();
 
-echo json_encode(["message" => "Logged out successfully"]);
+echo json_encode(['message' => 'Logged out successfully']);

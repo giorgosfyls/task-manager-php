@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskFlow — Kanban Board</title>
+
+  <!-- Google Fonts (same as dashboard.html) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/kanban.css">
+</head>
+<body class="page-kanban">
+
+  <!-- ═══════════════════════════════════════
+       SIDEBAR (same as dashboard.html)
+  ═══════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+    <div class="sidebar__brand">
+      <div class="sidebar__brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <span class="sidebar__brand-name">TaskFlow</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Sidebar navigation">
+      <span class="sidebar__group-label">Workspace</span>
+
+      <a href="dashboard.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+        </svg>
+        <span>Dashboard</span>
+      </a>
+
+      <a href="#" class="sidebar__link active" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span>Projects</span>
+        <span class="sidebar__badge">4</span>
+      </a>
+
+      <a href="#" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 11l3 3L22 4"/>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+        <span>My Tasks</span>
+        <span class="sidebar__badge">12</span>
+      </a>
+
+      <a href="#" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <span>Calendar</span>
+      </a>
+
+      <span class="sidebar__group-label">Account</span>
+
+      <a href="#" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <span>Profile</span>
+      </a>
+
+      <a href="#" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar__footer">
+      <div class="sidebar__avatar" aria-hidden="true">JD</div>
+      <span class="sidebar__user-name">John Doe</span>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════
+       TOP BAR
+  ═══════════════════════════════════════ -->
+  <header class="topbar" role="banner">
+    <button class="topbar__toggle" id="btn-sidebar-toggle"
+            aria-label="Toggle sidebar" aria-expanded="false" aria-controls="sidebar">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+
+    <div class="topbar__search" role="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="search" id="topbar-search" placeholder="Search tasks…" autocomplete="off" aria-label="Search" />
+    </div>
+
+    <div class="topbar__actions">
+      <button class="topbar__btn topbar__btn--notify" aria-label="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+      </button>
+      <div class="topbar__avatar" role="button" tabindex="0" aria-label="User menu" aria-haspopup="true">JD</div>
+    </div>
+  </header>
+
+  <!-- Sidebar backdrop overlay -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
+
+  <!-- ═══════════════════════════════════════
+       MAIN CONTENT
+  ═══════════════════════════════════════ -->
+  <main class="main-content" id="main" aria-label="Kanban board">
+
+    <section aria-labelledby="page-heading">
+      <div class="section-header">
+        <div class="kanban-breadcrumb">
+          <a href="dashboard.html" class="breadcrumb-link">Dashboard</a>
+          <span class="breadcrumb-sep" aria-hidden="true">/</span>
+          <span class="breadcrumb-current" id="project-name-heading">Loading…</span>
+        </div>
+        <div class="kanban-actions">
+          <button class="btn-sm" id="btn-new-task" aria-label="Add new task">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            New Task
+          </button>
+        </div>
+      </div>
+      <h1 class="page-title" id="page-heading" style="margin-top:0.25rem" aria-live="polite">Kanban Board</h1>
+    </section>
+
+    <!-- ── Kanban Board ─────────────────────────────────── -->
+    <section class="kanban-board" aria-label="Kanban columns">
+
+      <!-- Column: To Do -->
+      <div class="kanban-column" id="col-todo" data-status="todo"
+           aria-label="To Do column" aria-dropeffect="move">
+        <div class="kanban-column__header">
+          <span class="kanban-column__dot kanban-column__dot--todo" aria-hidden="true"></span>
+          <h2 class="kanban-column__title">To Do</h2>
+          <span class="kanban-column__count" id="count-todo" aria-live="polite">0</span>
+        </div>
+        <div class="kanban-column__body" id="tasks-todo" role="list" aria-label="To Do tasks">
+          <!-- Skeleton placeholder shown while loading -->
+          <div class="task-card task-card--skeleton" aria-hidden="true">
+            <div class="skeleton-line skeleton-line--title"></div>
+            <div class="skeleton-line skeleton-line--short"></div>
+          </div>
+        </div>
+        <button class="kanban-column__add-btn" data-status="todo" aria-label="Add task to To Do">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add Task
+        </button>
+      </div>
+
+      <!-- Column: In Progress -->
+      <div class="kanban-column" id="col-in_progress" data-status="in_progress"
+           aria-label="In Progress column" aria-dropeffect="move">
+        <div class="kanban-column__header">
+          <span class="kanban-column__dot kanban-column__dot--progress" aria-hidden="true"></span>
+          <h2 class="kanban-column__title">In Progress</h2>
+          <span class="kanban-column__count" id="count-in_progress" aria-live="polite">0</span>
+        </div>
+        <div class="kanban-column__body" id="tasks-in_progress" role="list" aria-label="In Progress tasks">
+          <div class="task-card task-card--skeleton" aria-hidden="true">
+            <div class="skeleton-line skeleton-line--title"></div>
+            <div class="skeleton-line skeleton-line--short"></div>
+          </div>
+        </div>
+        <button class="kanban-column__add-btn" data-status="in_progress" aria-label="Add task to In Progress">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add Task
+        </button>
+      </div>
+
+      <!-- Column: Done -->
+      <div class="kanban-column" id="col-done" data-status="done"
+           aria-label="Done column" aria-dropeffect="move">
+        <div class="kanban-column__header">
+          <span class="kanban-column__dot kanban-column__dot--done" aria-hidden="true"></span>
+          <h2 class="kanban-column__title">Done</h2>
+          <span class="kanban-column__count" id="count-done" aria-live="polite">0</span>
+        </div>
+        <div class="kanban-column__body" id="tasks-done" role="list" aria-label="Done tasks">
+          <div class="task-card task-card--skeleton" aria-hidden="true">
+            <div class="skeleton-line skeleton-line--title"></div>
+            <div class="skeleton-line skeleton-line--short"></div>
+          </div>
+        </div>
+        <button class="kanban-column__add-btn" data-status="done" aria-label="Add task to Done">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add Task
+        </button>
+      </div>
+
+    </section><!-- /.kanban-board -->
+  </main>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODAL 1 — Quick-Create Task  (simple, no comments)
+  ═══════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-task"
+       role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+    <div class="modal">
+      <div class="modal__header">
+        <h3 class="modal__title" id="modal-title">New Task</h3>
+        <button class="modal__close" id="modal-close" aria-label="Close dialog">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal__body">
+        <input type="hidden" id="task-id" value="">
+        <div class="form-group">
+          <label class="form-label" for="task-title">Title <span aria-hidden="true">*</span></label>
+          <input class="form-input" type="text" id="task-title" placeholder="Task title…" required autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="task-priority">Priority</label>
+          <select class="form-select" id="task-priority">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="task-due">Due Date</label>
+          <input class="form-input" type="date" id="task-due" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="task-status">Column</label>
+          <select class="form-select" id="task-status">
+            <option value="todo">To Do</option>
+            <option value="in_progress">In Progress</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn-sm btn-sm--ghost" id="btn-cancel-task">Cancel</button>
+        <button class="btn-sm" id="btn-save-task">Save Task</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODAL 2 — Task Detail  (Monday + Tuesday)
+       Fields: title, priority, due_date, assigned_to + Comments
+  ═══════════════════════════════════════════════════════ -->
+  <div class="modal-overlay modal-overlay--wide" id="modal-detail"
+       role="dialog" aria-modal="true" aria-labelledby="detail-modal-title" hidden>
+
+    <div class="modal modal--detail">
+
+      <!-- Header -->
+      <div class="modal__header">
+        <h3 class="modal__title" id="detail-modal-title">Task Details</h3>
+        <button class="modal__close" id="btn-close-detail" aria-label="Close dialog">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Two-column layout: left = form fields, right = comments -->
+      <div class="modal--detail__body">
+
+        <!-- ── LEFT: Edit fields (Monday) ── -->
+        <div class="modal--detail__fields">
+          <input type="hidden" id="detail-task-id" value="">
+
+          <div class="form-group">
+            <label class="form-label" for="detail-title">Title <span aria-hidden="true">*</span></label>
+            <input class="form-input" type="text" id="detail-title"
+                   placeholder="Task title…" required autocomplete="off" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="detail-priority">Priority</label>
+            <select class="form-select" id="detail-priority">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="detail-due">Due Date</label>
+            <input class="form-input" type="date" id="detail-due" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="detail-status">Column</label>
+            <select class="form-select" id="detail-status">
+              <option value="todo">To Do</option>
+              <option value="in_progress">In Progress</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+
+          <!-- Assigned to — populated dynamically with project members -->
+          <div class="form-group">
+            <label class="form-label" for="detail-assigned">Assigned To</label>
+            <select class="form-select" id="detail-assigned">
+              <option value="">Unassigned</option>
+              <!-- Options injected by kanban.js → populateMemberSelect() -->
+            </select>
+          </div>
+        </div><!-- /.modal--detail__fields -->
+
+        <!-- ── RIGHT: Comments section (Tuesday) ── -->
+        <div class="modal--detail__comments">
+          <h4 class="comments__heading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            Comments
+          </h4>
+
+          <!-- Comment list — populated by loadComments() -->
+          <div class="comment-list" id="comment-list" role="log" aria-live="polite" aria-label="Comments">
+            <!-- Comments injected dynamically by kanban.js -->
+          </div>
+
+          <!-- Add comment form -->
+          <div class="comment-form">
+            <textarea
+              class="comment-input"
+              id="comment-input"
+              placeholder="Write a comment… (Ctrl+Enter to post)"
+              rows="3"
+              aria-label="New comment"
+              maxlength="2000"
+            ></textarea>
+            <button class="btn-sm" id="btn-post-comment" aria-label="Post comment">Post</button>
+          </div>
+        </div><!-- /.modal--detail__comments -->
+
+      </div><!-- /.modal--detail__body -->
+
+      <!-- Footer -->
+      <div class="modal__footer">
+        <button class="btn-sm btn-sm--ghost" id="btn-cancel-detail">Cancel</button>
+        <button class="btn-sm" id="btn-save-detail">Save Changes</button>
+      </div>
+
+    </div><!-- /.modal--detail -->
+  </div><!-- /#modal-detail -->
+
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+
+  <!-- JavaScript -->
+  <script src="js/api.js"></script>
+  <script src="js/kanban.js"></script>
+</body>
+</html>

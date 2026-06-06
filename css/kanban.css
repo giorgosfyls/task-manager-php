@@ -1,0 +1,685 @@
+/* ═══════════════════════════════════════════════════════════════
+   kanban.css — Chapter 8 + 9
+   Styles for: Kanban board, columns, task cards, priority badges,
+   modal (quick-create + detail), comments section,
+   loading spinners, empty states, error states.
+   Extends the design system from base.css / dashboard.css.
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Design tokens (shared with base.css) ─────────────────── */
+:root {
+  --col-todo:        #3b82f6;   /* blue      */
+  --col-progress:    #f59e0b;   /* orange    */
+  --col-done:        #22c55e;   /* green     */
+
+  --priority-high:   #ef4444;
+  --priority-medium: #f59e0b;
+  --priority-low:    #22c55e;
+
+  --col-bg:          #f8fafc;   /* column background */
+  --card-bg:         #ffffff;
+  --card-border:     #e2e8f0;
+  --card-shadow:     0 1px 3px rgba(0,0,0,.08);
+  --card-shadow-drag:0 8px 24px rgba(0,0,0,.18);
+
+  --modal-overlay:   rgba(15,23,42,.55);
+  --radius-card:     10px;
+  --radius-col:      14px;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   BREADCRUMB
+════════════════════════════════════════════════════════════ */
+.kanban-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .82rem;
+  color: var(--text-muted, #94a3b8);
+}
+.breadcrumb-link {
+  color: var(--text-muted, #94a3b8);
+  text-decoration: none;
+  transition: color .2s;
+}
+.breadcrumb-link:hover { color: var(--accent, #e8490f); }
+.breadcrumb-sep        { user-select: none; }
+.breadcrumb-current    { color: var(--text-main, #0f172a); font-weight: 600; }
+.kanban-actions        { display: flex; gap: .75rem; }
+
+
+/* ════════════════════════════════════════════════════════════
+   KANBAN BOARD  (3 columns in flex-row)
+════════════════════════════════════════════════════════════ */
+.kanban-board {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 2rem;
+  min-height: calc(100vh - 220px);
+}
+
+/* Each column has a fixed width and scrolls if needed */
+.kanban-column {
+  flex: 0 0 320px;
+  display: flex;
+  flex-direction: column;
+  background: var(--col-bg);
+  border-radius: var(--radius-col);
+  border: 1px solid var(--card-border);
+  overflow: hidden;
+  transition: box-shadow .2s;
+}
+
+/* Drag-over state — highlight the target column */
+.kanban-column.drag-over {
+  box-shadow: 0 0 0 2px var(--accent, #e8490f);
+}
+
+
+/* ── Column: header ─────────────────────────────────────── */
+.kanban-column__header {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: 1rem 1rem .75rem;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.kanban-column__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.kanban-column__dot--todo     { background: var(--col-todo); }
+.kanban-column__dot--progress { background: var(--col-progress); }
+.kanban-column__dot--done     { background: var(--col-done); }
+
+.kanban-column__title {
+  font-family: 'Syne', sans-serif;
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+  margin: 0;
+  flex: 1;
+}
+
+.kanban-column__count {
+  background: var(--card-border);
+  color: var(--text-muted, #64748b);
+  font-size: .72rem;
+  font-weight: 600;
+  padding: .15rem .5rem;
+  border-radius: 999px;
+  min-width: 22px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+
+/* ── Column: body (scrollable) ──────────────────────────── */
+.kanban-column__body {
+  flex: 1;
+  padding: .75rem;
+  display: flex;
+  flex-direction: column;
+  gap: .65rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 280px);
+  min-height: 100px;          /* ensures drop works even when empty */
+  scrollbar-width: thin;
+  scrollbar-color: var(--card-border) transparent;
+}
+.kanban-column__body::-webkit-scrollbar { width: 4px; }
+.kanban-column__body::-webkit-scrollbar-track { background: transparent; }
+.kanban-column__body::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 2px; }
+
+
+/* ── "Add Task" button at the bottom of each column ────── */
+.kanban-column__add-btn {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  width: 100%;
+  padding: .75rem 1rem;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--card-border);
+  color: var(--text-muted, #94a3b8);
+  font-size: .82rem;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: color .2s, background .2s;
+}
+.kanban-column__add-btn svg { width: 14px; height: 14px; }
+.kanban-column__add-btn:hover {
+  color: var(--accent, #e8490f);
+  background: rgba(232,73,15,.04);
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   TASK CARD
+════════════════════════════════════════════════════════════ */
+.task-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-card);
+  padding: .85rem 1rem;
+  cursor: pointer;           /* pointer so whole card is clickable */
+  box-shadow: var(--card-shadow);
+  transition: box-shadow .2s, transform .15s, opacity .2s;
+  position: relative;
+  user-select: none;
+  list-style: none;
+}
+.task-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+}
+.task-card[draggable="true"] { cursor: grab; }
+.task-card.dragging {
+  opacity: .45;
+  box-shadow: var(--card-shadow-drag);
+  transform: rotate(1.5deg) scale(1.02);
+  cursor: grabbing;
+}
+.task-card.drag-ghost {
+  border: 2px dashed var(--accent, #e8490f);
+  background: rgba(232,73,15,.05);
+  opacity: .6;
+}
+
+/* Top row: title + badge */
+.task-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .5rem;
+  margin-bottom: .5rem;
+}
+.task-card__title {
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--text-main, #0f172a);
+  line-height: 1.4;
+  flex: 1;
+  margin: 0;
+}
+
+/* Priority badge */
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  padding: .18rem .55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.priority-badge--high   { background: rgba(239,68,68,.12);  color: var(--priority-high);   }
+.priority-badge--medium { background: rgba(245,158,11,.12); color: var(--priority-medium); }
+.priority-badge--low    { background: rgba(34,197,94,.12);  color: var(--priority-low);    }
+
+/* Meta row: due date + avatar */
+.task-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  margin-top: .55rem;
+}
+.task-card__due {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  font-size: .75rem;
+  color: var(--text-muted, #94a3b8);
+}
+.task-card__due svg        { width: 12px; height: 12px; flex-shrink: 0; }
+.task-card__due--overdue   { color: var(--priority-high); font-weight: 600; }
+.task-card__avatar {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--accent, #e8490f);
+  color: #fff;
+  font-size: .62rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Action buttons (visible on hover) */
+.task-card__actions {
+  display: flex;
+  gap: .25rem;
+  position: absolute;
+  top: .6rem; right: .6rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s;
+}
+.task-card:hover .task-card__actions,
+.task-card:focus-within .task-card__actions { opacity: 1; pointer-events: auto; }
+
+.task-card__btn {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  border: none;
+  background: var(--col-bg);
+  color: var(--text-muted, #94a3b8);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+  padding: 0;
+}
+.task-card__btn svg              { width: 13px; height: 13px; }
+.task-card__btn:hover            { background: var(--card-border); color: var(--text-main, #0f172a); }
+.task-card__btn--delete:hover    { background: rgba(239,68,68,.12); color: var(--priority-high); }
+
+
+/* ════════════════════════════════════════════════════════════
+   WEDNESDAY — LOADING SPINNER
+════════════════════════════════════════════════════════════ */
+.spinner-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  width: 100%;
+}
+.spinner-wrap--sm { padding: 1rem; }
+.spinner-wrap--lg { padding: 3rem; }
+
+.spinner {
+  display: block;
+  width: 28px; height: 28px;
+  border: 3px solid var(--card-border);
+  border-top-color: var(--accent, #e8490f);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+.spinner-wrap--sm .spinner { width: 20px; height: 20px; border-width: 2px; }
+.spinner-wrap--lg .spinner { width: 40px; height: 40px; border-width: 4px; }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   WEDNESDAY — EMPTY STATE
+════════════════════════════════════════════════════════════ */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  gap: .5rem;
+  width: 100%;
+}
+.empty-state__icon {
+  width: 36px; height: 36px;
+  stroke: var(--card-border);
+  margin-bottom: .25rem;
+}
+.empty-state__title {
+  font-size: .875rem;
+  font-weight: 600;
+  color: var(--text-muted, #94a3b8);
+  margin: 0;
+}
+.empty-state__sub {
+  font-size: .78rem;
+  color: var(--card-border);
+  margin: 0;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   WEDNESDAY — INLINE ERROR STATE
+════════════════════════════════════════════════════════════ */
+.inline-error {
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+  padding: .75rem;
+  background: rgba(239,68,68,.06);
+  border: 1px solid rgba(239,68,68,.2);
+  border-radius: 8px;
+  color: var(--priority-high);
+  font-size: .82rem;
+  line-height: 1.45;
+  width: 100%;
+}
+.inline-error svg {
+  width: 16px; height: 16px;
+  flex-shrink: 0;
+  margin-top: .1rem;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   SKELETON PLACEHOLDER (shown while tasks are loading)
+════════════════════════════════════════════════════════════ */
+.task-card--skeleton {
+  cursor: default;
+  pointer-events: none;
+}
+.skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+}
+.skeleton-line--title { width: 75%; margin-bottom: .65rem; height: 14px; }
+.skeleton-line--short { width: 40%; }
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   MODAL — Base (shared by both modals)
+════════════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  animation: fadeIn .18s ease;
+}
+.modal-overlay[hidden] { display: none; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  animation: slideUp .22s ease;
+  overflow: hidden;
+}
+@keyframes slideUp {
+  from { transform: translateY(18px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--card-border);
+}
+.modal__title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+  margin: 0;
+}
+.modal__close {
+  width: 32px; height: 32px;
+  border: none; background: transparent;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted, #94a3b8);
+  transition: background .15s, color .15s;
+  padding: 0;
+}
+.modal__close svg  { width: 16px; height: 16px; }
+.modal__close:hover { background: var(--col-bg); color: var(--text-main, #0f172a); }
+
+.modal__body {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .75rem;
+  padding: .75rem 1.5rem 1.25rem;
+  border-top: 1px solid var(--card-border);
+}
+
+/* Form elements */
+.form-group   { display: flex; flex-direction: column; gap: .35rem; }
+.form-label {
+  font-size: .8rem; font-weight: 600;
+  color: var(--text-muted, #64748b);
+  text-transform: uppercase; letter-spacing: .04em;
+}
+.form-input,
+.form-select {
+  width: 100%;
+  padding: .6rem .85rem;
+  border: 1.5px solid var(--card-border);
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .9rem;
+  color: var(--text-main, #0f172a);
+  background: var(--card-bg);
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  box-sizing: border-box;
+}
+.form-input:focus,
+.form-select:focus {
+  border-color: var(--accent, #e8490f);
+  box-shadow: 0 0 0 3px rgba(232,73,15,.1);
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   MONDAY — TASK DETAIL MODAL (wide, two-column layout)
+════════════════════════════════════════════════════════════ */
+.modal-overlay--wide { align-items: flex-start; padding: 2rem 1rem; overflow-y: auto; }
+
+.modal--detail {
+  max-width: 860px;   /* wider than quick-create modal */
+}
+
+/* Two-column body: left = fields, right = comments */
+.modal--detail__body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.modal--detail__fields {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-right: 1px solid var(--card-border);
+}
+
+.modal--detail__comments {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   TUESDAY — COMMENTS SECTION
+════════════════════════════════════════════════════════════ */
+.comments__heading {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  font-family: 'Syne', sans-serif;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+  margin: 0 0 .25rem;
+}
+.comments__heading svg { width: 16px; height: 16px; stroke: var(--accent, #e8490f); }
+
+/* Comment list — scrollable */
+.comment-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  max-height: 280px;
+  min-height: 80px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--card-border) transparent;
+}
+.comment-list::-webkit-scrollbar       { width: 4px; }
+.comment-list::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 2px; }
+
+/* Single comment */
+.comment {
+  display: flex;
+  gap: .65rem;
+  align-items: flex-start;
+}
+
+/* Slide-in animation for newly posted comments */
+.comment--new {
+  animation: commentIn .3s ease;
+}
+@keyframes commentIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.comment__avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--accent, #e8490f);
+  color: #fff;
+  font-size: .65rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.comment__body { flex: 1; }
+
+.comment__meta {
+  display: flex;
+  align-items: baseline;
+  gap: .5rem;
+  margin-bottom: .2rem;
+}
+.comment__author {
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+.comment__time {
+  font-size: .7rem;
+  color: var(--text-muted, #94a3b8);
+}
+.comment__text {
+  font-size: .82rem;
+  color: var(--text-main, #0f172a);
+  line-height: 1.5;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Add comment form */
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  margin-top: auto;
+  padding-top: .5rem;
+  border-top: 1px solid var(--card-border);
+}
+
+.comment-input {
+  width: 100%;
+  padding: .55rem .75rem;
+  border: 1.5px solid var(--card-border);
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .85rem;
+  color: var(--text-main, #0f172a);
+  background: var(--card-bg);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  box-sizing: border-box;
+  min-height: 60px;
+}
+.comment-input:focus {
+  border-color: var(--accent, #e8490f);
+  box-shadow: 0 0 0 3px rgba(232,73,15,.1);
+}
+
+/* "Post" button aligned right */
+.comment-form .btn-sm {
+  align-self: flex-end;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   TOAST NOTIFICATION
+════════════════════════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 1.5rem; right: 1.5rem;
+  background: #0f172a;
+  color: #fff;
+  font-size: .85rem;
+  padding: .65rem 1.1rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.25);
+  z-index: 2000;
+  animation: toastIn .25s ease;
+}
+.toast[hidden]    { display: none; }
+.toast--success   { background: #15803d; }
+.toast--error     { background: #b91c1c; }
+.toast--info      { background: #1d4ed8; }
+
+@keyframes toastIn {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE  (< 768px)
+════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Kanban columns stack vertically */
+  .kanban-board   { flex-direction: column; overflow-x: visible; }
+  .kanban-column  { flex: none; width: 100%; }
+  .kanban-column__body { max-height: 360px; }
+
+  /* Detail modal becomes single-column */
+  .modal--detail          { max-width: 100%; margin: 0; border-radius: 12px 12px 0 0; }
+  .modal-overlay--wide    { align-items: flex-end; padding: 0; }
+  .modal--detail__body    { grid-template-columns: 1fr; }
+  .modal--detail__fields  { border-right: none; border-bottom: 1px solid var(--card-border); }
+  .comment-list           { max-height: 200px; }
+}

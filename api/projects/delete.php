@@ -1,58 +1,72 @@
 <?php
+/**
+ * projects/delete.php — Delete a project
+ *
+ * Method : DELETE
+ * Body   : { id: int }
+ * Returns: 200 { message }
+ *          400 { error } — missing id
+ *          403 { error } — user is not the owner
+ *          404 { error } — project not found
+ *          405 { error } — wrong HTTP method
+ *          500 { error } — database error
+ *
+ * Authorization: only the project owner can delete.
+ * Cascade: schema ON DELETE CASCADE removes project_members,
+ *          tasks, and comments automatically.
+ */
 
-header("Content-Type: application/json");
+header('Content-Type: application/json');
 
-require "../config/session_check.php";
-require "../config/db.php";
+require '../config/session_check.php';
+require '../config/db.php';
 
-// Only DELETE is allowed
-if ($_SERVER["REQUEST_METHOD"] !== "DELETE") {
+// ── Method guard ───────────────────────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
     http_response_code(405);
-    echo json_encode(["error" => "Method not allowed"]);
+    echo json_encode(['error' => 'Method not allowed']);
     exit;
 }
 
-$data = json_decode(file_get_contents("php://input"), true);
+// ── Parse body ─────────────────────────────────────────────────
+$data      = json_decode(file_get_contents('php://input'), true);
+$projectId = isset($data['id']) && is_numeric($data['id']) ? (int) $data['id'] : null;
+$userId    = (int) $_SESSION['user_id'];
 
-// 1. Check required field
-if (!isset($data["id"]) || !is_numeric($data["id"])) {
+if (!$projectId) {
     http_response_code(400);
-    echo json_encode(["error" => "Project ID is required"]);
+    echo json_encode(['error' => 'Project ID is required']);
     exit;
 }
-
-$projectId = (int) $data["id"];
-$userId    = $_SESSION["user_id"];
 
 try {
-    // 2. Check the project exists
-    $check = $pdo->prepare("
+    // ── Verify project exists ──────────────────────────────────
+    $check = $pdo->prepare('
         SELECT id, owner_id FROM projects WHERE id = :id
-    ");
-    $check->execute([":id" => $projectId]);
-    $project = $check->fetch(PDO::FETCH_ASSOC);
+    ');
+    $check->execute([':id' => $projectId]);
+    $project = $check->fetch();
 
     if (!$project) {
         http_response_code(404);
-        echo json_encode(["error" => "Project not found"]);
+        echo json_encode(['error' => 'Project not found']);
         exit;
     }
 
-    // 3. Authorization check — only the owner can delete
-    if ((int) $project["owner_id"] !== $userId) {
+    // ── Verify ownership ───────────────────────────────────────
+    if ((int) $project['owner_id'] !== $userId) {
         http_response_code(403);
-        echo json_encode(["error" => "Only the project owner can delete this project"]);
+        echo json_encode(['error' => 'Only the project owner can delete this project']);
         exit;
     }
 
-    // 4. DELETE — CASCADE in schema automatically removes:
-    //    project_members, tasks, and comments (via tasks)
-    $delete = $pdo->prepare("DELETE FROM projects WHERE id = :id");
-    $delete->execute([":id" => $projectId]);
+    // ── Delete — CASCADE handles members, tasks, comments ─────
+    $stmt = $pdo->prepare('DELETE FROM projects WHERE id = :id');
+    $stmt->execute([':id' => $projectId]);
 
-    echo json_encode(["message" => "Project deleted successfully"]);
+    echo json_encode(['message' => 'Project deleted successfully']);
 
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(["error" => "Failed to delete project"]);
+    echo json_encode(['error' => 'Failed to delete project']);
 }

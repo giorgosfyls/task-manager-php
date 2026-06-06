@@ -5,19 +5,21 @@
    Depends on: js/api.js (must be loaded first)
 
    Responsibilities:
-    1. Session check  — redirect to login if not authenticated
-    2. Load & render stat cards
-    3. Load & render project cards (create / delete)
-    4. Load & render recent tasks
-    5. Sidebar toggle (collapse / expand)
-    6. Search filter  — client-side on loaded tasks
+     1. Session check  — redirect to login if not authenticated
+     2. Load & render stat cards
+     3. Load & render project cards (create / delete)
+     4. Load & render recent tasks
+     5. Sidebar toggle (mobile drawer + desktop collapse)
+     6. Search filter  — client-side filter on loaded tasks
    ============================================================ */
 
 
-/* ── 1. SESSION CHECK ──────────────────────────────────────── */
-// Uses apiGet from api.js — throws automatically on 401.
-// Any error (network, 401, 500) → redirect to login.
+/* ════════════════════════════════════════════════════════════
+   1. SESSION CHECK + BOOT
+════════════════════════════════════════════════════════════ */
 
+// Immediately-invoked async function so we can use await at top level.
+// Any error (401 session expired, network failure) → redirect to login.
 (async () => {
   try {
     await apiGet('api/config/session_check.php');
@@ -28,7 +30,9 @@
 })();
 
 
-/* ── 2. BOOT ───────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   2. BOOT — wire up UI then fetch data
+════════════════════════════════════════════════════════════ */
 
 async function bootDashboard() {
   setupSidebarToggle();
@@ -38,7 +42,7 @@ async function bootDashboard() {
   // Fetch projects and tasks in parallel for speed
   const [projects, tasks] = await Promise.all([
     fetchProjects(),
-    fetchTasks(),
+    fetchAllTasks(),
   ]);
 
   renderStats(projects, tasks);
@@ -47,56 +51,77 @@ async function bootDashboard() {
 }
 
 
-/* ── 3. FETCH HELPERS ──────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   3. FETCH HELPERS
+════════════════════════════════════════════════════════════ */
 
+/** Loads all projects the logged-in user is a member of. */
 async function fetchProjects() {
   try {
     const data = await apiGet('api/projects/list.php');
-    return data.projects;
+    return data.projects ?? [];
   } catch {
     return [];
   }
 }
 
-async function fetchTasks() {
+/**
+ * Loads recent tasks across all projects.
+ * Note: api/tasks/list.php requires a project_id, so we use the
+ * dashboard-specific endpoint that returns tasks for all the user's projects.
+ */
+async function fetchAllTasks() {
   try {
     const data = await apiGet('api/tasks/list.php');
-    return data.tasks;
+    return data.tasks ?? [];
   } catch {
     return [];
   }
 }
 
 
-/* ── 4. STAT CARDS ─────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   4. STAT CARDS
+════════════════════════════════════════════════════════════ */
 
+/**
+ * Populates the four stat cards at the top of the dashboard.
+ * Member count is derived from the union of all project members.
+ */
 function renderStats(projects, tasks) {
-  const totalProjects = projects.length;
-  const openTasks     = tasks.filter(t => t.status !== 'done').length;
-  const doneTasks     = tasks.filter(t => t.status === 'done').length;
+  const openTasks  = tasks.filter(t => t.status !== 'done').length;
+  const doneTasks  = tasks.filter(t => t.status === 'done').length;
 
+  // Unique member count across all projects
   const memberIds = new Set(
-    projects.flatMap(p => (p.members || []).map(m => m.id))
+    projects.flatMap(p => (p.members ?? []).map(m => m.id))
   );
 
-  setText('stat-projects', totalProjects);
+  setText('stat-projects', projects.length);
   setText('stat-tasks',    openTasks);
   setText('stat-done',     doneTasks);
   setText('stat-members',  memberIds.size || '—');
 }
 
+/** Sets the textContent of an element by id (no-op if not found). */
 function setText(id, value) {
   const el = document.getElementById(id);
   if (el) el.textContent = value;
 }
 
 
-/* ── 5. PROJECT CARDS ──────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   5. PROJECT CARDS
+════════════════════════════════════════════════════════════ */
 
-// Module-level cache — updated on create / delete
-// so we never need to refetch the whole list
+// Module-level cache — updated on create/delete so we never
+// refetch the entire list from the server unnecessarily.
 let allProjects = [];
 
+/**
+ * Renders up to 6 project cards into the grid.
+ * Shows an empty state with a "Create" link when there are none.
+ */
 function renderProjects(projects) {
   allProjects = projects;
 
@@ -112,24 +137,28 @@ function renderProjects(projects) {
         <a href="#" id="link-new-project">Create your first one.</a>
       </p>`;
     document.getElementById('link-new-project')
-      ?.addEventListener('click', e => {
-        e.preventDefault();
-        openNewProjectModal();
-      });
+      ?.addEventListener('click', e => { e.preventDefault(); openNewProjectModal(); });
     return;
   }
 
-  // Max 6 cards on the dashboard overview
+  // Show max 6 cards on the dashboard overview
   grid.innerHTML = projects.slice(0, 6).map(p => projectCardHTML(p)).join('');
 }
 
+/**
+ * Builds the HTML string for a single project card.
+ * All user-generated content is escaped with escHtml().
+ *
+ * @param {object} p  Project object from the API
+ * @returns {string}
+ */
 function projectCardHTML(p) {
   const total    = p.task_count ?? 0;
   const done     = p.done_count ?? 0;
   const pct      = total > 0 ? Math.round((done / total) * 100) : 0;
-  const members  = (p.members || []).slice(0, 4);
+  const members  = (p.members ?? []).slice(0, 4);
   const overflow = (p.members?.length ?? 0) - members.length;
-  const colour   = p.colour || '#e8490f';
+  const colour   = p.colour || '#e8490f'; // Accent colour, falls back to brand orange
 
   return `
     <article class="project-card" data-project-id="${p.id}" tabindex="0"
@@ -189,10 +218,10 @@ function projectCardHTML(p) {
     </article>`;
 }
 
-// ── Event delegation: card click OR delete button ───────────────
+// ── Event delegation: card click or delete button ──────────────
 document.addEventListener('click', async e => {
 
-  // Delete button — must check before card to stop propagation
+  // Delete button — check first so click doesn't bubble to card
   const deleteBtn = e.target.closest('.btn-delete-project');
   if (deleteBtn) {
     e.stopPropagation();
@@ -200,25 +229,37 @@ document.addEventListener('click', async e => {
     return;
   }
 
-  // Card → navigate to project page
+  // Card click → navigate to Kanban board
+  // Uses project_id to match project.html?project_id=X
   const card = e.target.closest('.project-card[data-project-id]');
   if (card) {
-    window.location.href = `project.html?id=${card.dataset.projectId}`;
+    const name = allProjects.find(p => String(p.id) === card.dataset.projectId)?.title || '';
+    // Cache name so project.html can show it in the breadcrumb immediately
+    sessionStorage.setItem(`project_name_${card.dataset.projectId}`, name);
+    window.location.href = `project.html?project_id=${card.dataset.projectId}`;
   }
 });
 
+// Keyboard: Enter on focused card
 document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   const card = e.target.closest('.project-card[data-project-id]');
-  if (card) window.location.href = `project.html?id=${card.dataset.projectId}`;
+  if (card) {
+    window.location.href = `project.html?project_id=${card.dataset.projectId}`;
+  }
 });
 
-// ── Create project ──────────────────────────────────────────────
+// ── Create project ─────────────────────────────────────────────
+
+/**
+ * POSTs a new project, prepends it to the cached list, and re-renders.
+ * @returns {{ ok: boolean, message?: string }}
+ */
 async function handleCreateProject(title, description) {
   try {
     const data = await apiPost('api/projects/create.php', { title, description });
 
-    // Prepend to cache + re-render — no refetch needed
+    // Prepend to local cache + re-render — no refetch needed
     allProjects = [data.project, ...allProjects];
     renderProjects(allProjects);
     renderStats(allProjects, allTasks);
@@ -229,15 +270,18 @@ async function handleCreateProject(title, description) {
   }
 }
 
-// ── Delete project ──────────────────────────────────────────────
+// ── Delete project ─────────────────────────────────────────────
+
+/**
+ * Confirms, deletes, removes from cache, and re-renders.
+ * @param {string|number} projectId
+ */
 async function handleDeleteProject(projectId) {
-  // Native confirmation dialog — simple and blocking
   if (!confirm('Delete this project? This action cannot be undone.')) return;
 
   try {
     await apiDelete('api/projects/delete.php', { id: Number(projectId) });
 
-    // Remove from cache + re-render — no refetch needed
     allProjects = allProjects.filter(p => String(p.id) !== String(projectId));
     renderProjects(allProjects);
     renderStats(allProjects, allTasks);
@@ -248,19 +292,26 @@ async function handleDeleteProject(projectId) {
 }
 
 
-/* ── 6. TASK LIST ──────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   6. RECENT TASK LIST
+════════════════════════════════════════════════════════════ */
 
+/** Module-level cache — used by search and stat re-renders. */
 let allTasks = [];
 
+/** Stores tasks and renders the first 10. */
 function renderTasks(tasks) {
   allTasks = tasks;
   const list = document.getElementById('task-list');
   if (!list) return;
-
   list.setAttribute('aria-busy', 'false');
   paintTaskList(tasks.slice(0, 10));
 }
 
+/**
+ * Renders a task list — called by both renderTasks() and the
+ * search filter whenever the query changes.
+ */
 function paintTaskList(tasks) {
   const list = document.getElementById('task-list');
   if (!list) return;
@@ -275,6 +326,11 @@ function paintTaskList(tasks) {
   list.innerHTML = tasks.map(t => taskItemHTML(t)).join('');
 }
 
+/**
+ * Builds the HTML for a single task row.
+ * @param {object} t  Task object
+ * @returns {string}
+ */
 function taskItemHTML(t) {
   const isDone   = t.status === 'done';
   const dueLabel = formatDue(t.due_date);
@@ -298,6 +354,7 @@ function taskItemHTML(t) {
     </li>`;
 }
 
+// ── Toggle task done/todo via checkbox click or Enter/Space ────
 document.addEventListener('click', e => {
   const checkbox = e.target.closest('.task-item__check');
   if (checkbox) toggleTask(checkbox);
@@ -309,6 +366,10 @@ document.addEventListener('keydown', e => {
   if (checkbox) { e.preventDefault(); toggleTask(checkbox); }
 });
 
+/**
+ * Optimistically toggles a task between 'todo' and 'done',
+ * rolling back on API failure.
+ */
 async function toggleTask(checkboxEl) {
   const li     = checkboxEl.closest('.task-item');
   const taskId = li?.dataset.taskId;
@@ -317,13 +378,14 @@ async function toggleTask(checkboxEl) {
   const isDone    = li.classList.contains('done');
   const newStatus = isDone ? 'todo' : 'done';
 
-  // Optimistic UI — update immediately, revert on error
+  // Optimistic update
   li.classList.toggle('done', !isDone);
   checkboxEl.setAttribute('aria-checked', String(!isDone));
 
   try {
-    await apiPost('api/tasks/update.php', { id: taskId, status: newStatus });
+    await apiPost('api/tasks/update.php', { id: Number(taskId), status: newStatus });
 
+    // Keep local cache in sync
     const task = allTasks.find(t => String(t.id) === String(taskId));
     if (task) task.status = newStatus;
 
@@ -335,30 +397,33 @@ async function toggleTask(checkboxEl) {
 }
 
 
-/* ── 7. NEW PROJECT MODAL ──────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   7. NEW PROJECT MODAL
+════════════════════════════════════════════════════════════ */
 
+/** Wires up the "New Project" button in the topbar. */
 function setupNewProjectBtn() {
   document.getElementById('btn-new-project')
     ?.addEventListener('click', openNewProjectModal);
 }
 
+/** Creates and appends the New Project modal, then manages its lifecycle. */
 function openNewProjectModal() {
-  // Remove any existing modal first (prevent duplicates)
+  // Prevent duplicate modals
   document.getElementById('modal-new-project')?.remove();
 
-  // ── Build modal element ───────────────────────────────────────
   const overlay = document.createElement('div');
   overlay.id        = 'modal-new-project';
   overlay.className = 'modal-overlay';
   overlay.setAttribute('role',            'dialog');
   overlay.setAttribute('aria-modal',      'true');
-  overlay.setAttribute('aria-labelledby', 'modal-title');
+  overlay.setAttribute('aria-labelledby', 'modal-new-title');
 
   overlay.innerHTML = `
     <div class="modal">
 
       <div class="modal__header">
-        <h2 class="modal__title" id="modal-title">New Project</h2>
+        <h2 class="modal__title" id="modal-new-title">New Project</h2>
         <button class="modal__close" id="btn-modal-close" aria-label="Close modal">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2"
                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -369,7 +434,6 @@ function openNewProjectModal() {
       </div>
 
       <div class="modal__body">
-
         <div class="field">
           <label for="modal-project-title">
             Title <span aria-hidden="true" style="color:var(--red)">*</span>
@@ -393,7 +457,6 @@ function openNewProjectModal() {
                     rows="3"
                     maxlength="500"></textarea>
         </div>
-
       </div>
 
       <div class="modal__footer">
@@ -408,32 +471,24 @@ function openNewProjectModal() {
 
   document.body.appendChild(overlay);
 
-  // ── References ────────────────────────────────────────────────
+  // Cache frequently-accessed elements
   const titleInput = overlay.querySelector('#modal-project-title');
   const descInput  = overlay.querySelector('#modal-project-desc');
   const submitBtn  = overlay.querySelector('#btn-modal-submit');
   const errorEl    = overlay.querySelector('#modal-title-error');
 
-  // Focus first input on open (accessibility)
+  // Focus first input for accessibility
   titleInput.focus();
 
-  // ── Close logic ───────────────────────────────────────────────
+  // ── Close helpers ──────────────────────────────────────────
   const closeModal = () => overlay.remove();
 
   overlay.querySelector('#btn-modal-close').addEventListener('click', closeModal);
   overlay.querySelector('#btn-modal-cancel').addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+  overlay.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  // Click outside the modal box closes it
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) closeModal();
-  });
-
-  // Escape key closes modal
-  overlay.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeModal();
-  });
-
-  // ── Submit ────────────────────────────────────────────────────
+  // ── Submit ─────────────────────────────────────────────────
   submitBtn.addEventListener('click', async () => {
     const title       = titleInput.value.trim();
     const description = descInput.value.trim();
@@ -442,7 +497,6 @@ function openNewProjectModal() {
     errorEl.textContent = '';
     titleInput.classList.remove('error');
 
-    // Client-side validation
     if (!title) {
       errorEl.textContent = 'Title is required.';
       titleInput.classList.add('error');
@@ -450,7 +504,7 @@ function openNewProjectModal() {
       return;
     }
 
-    // Loading state — prevent double submit
+    // Prevent double-submit
     submitBtn.disabled = true;
     submitBtn.classList.add('loading');
 
@@ -459,7 +513,6 @@ function openNewProjectModal() {
     if (result.ok) {
       closeModal();
     } else {
-      // Show server error inside modal
       errorEl.textContent = result.message;
       submitBtn.disabled  = false;
       submitBtn.classList.remove('loading');
@@ -469,74 +522,82 @@ function openNewProjectModal() {
 }
 
 
-/* ── 8. SIDEBAR TOGGLE ─────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   8. SIDEBAR TOGGLE
+   Mobile: drawer that slides in with a backdrop.
+   Desktop: collapses to icon-only rail, persisted in localStorage.
+════════════════════════════════════════════════════════════ */
 
 function setupSidebarToggle() {
   const btn      = document.getElementById('btn-sidebar-toggle');
   const sidebar  = document.querySelector('.sidebar');
   const backdrop = document.getElementById('sidebar-backdrop');
-  const body     = document.body;
 
   if (!btn || !sidebar) return;
 
-  if (localStorage.getItem('sidebar-collapsed') === 'true') {
-    body.classList.add('sidebar-collapsed');
+  const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
+
+  // Restore desktop collapse state from last visit
+  if (!isMobile() && localStorage.getItem('sidebar-collapsed') === 'true') {
+    document.body.classList.add('sidebar-collapsed');
     btn.setAttribute('aria-expanded', 'false');
   }
 
-  const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
-
-  function openMobileSidebar() {
+  const openMobile = () => {
     sidebar.classList.add('open');
     backdrop?.classList.add('visible');
     btn.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
-  }
+    document.body.style.overflow = 'hidden'; // Prevent background scroll
+  };
 
-  function closeMobileSidebar() {
+  const closeMobile = () => {
     sidebar.classList.remove('open');
     backdrop?.classList.remove('visible');
     btn.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
-  }
+  };
 
   btn.addEventListener('click', () => {
     if (isMobile()) {
-      sidebar.classList.contains('open')
-        ? closeMobileSidebar()
-        : openMobileSidebar();
+      sidebar.classList.contains('open') ? closeMobile() : openMobile();
     } else {
-      const isCollapsed = body.classList.toggle('sidebar-collapsed');
-      btn.setAttribute('aria-expanded', String(!isCollapsed));
-      localStorage.setItem('sidebar-collapsed', isCollapsed);
+      const collapsed = document.body.classList.toggle('sidebar-collapsed');
+      btn.setAttribute('aria-expanded', String(!collapsed));
+      localStorage.setItem('sidebar-collapsed', collapsed);
     }
   });
 
-  backdrop?.addEventListener('click', closeMobileSidebar);
+  backdrop?.addEventListener('click', closeMobile);
 
+  // Escape closes mobile drawer and returns focus to the toggle button
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && sidebar.classList.contains('open')) {
-      closeMobileSidebar();
+      closeMobile();
       btn.focus();
     }
   });
 
+  // Clean up mobile state on resize to desktop
   window.addEventListener('resize', () => {
-    if (!isMobile() && sidebar.classList.contains('open')) closeMobileSidebar();
+    if (!isMobile() && sidebar.classList.contains('open')) closeMobile();
   });
 }
 
 
-/* ── 9. SEARCH FILTER ──────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   9. SEARCH FILTER (client-side)
+   Filters the already-loaded task list — no extra API calls.
+   Syncs desktop and mobile inputs so they stay in step.
+════════════════════════════════════════════════════════════ */
 
 function setupSearch() {
   const desktopInput = document.getElementById('topbar-search');
   const mobileInput  = document.getElementById('mobile-search-input');
 
-  function handleSearch(q) {
-    const query = q.trim().toLowerCase();
-    if (!query) { paintTaskList(allTasks.slice(0, 10)); return; }
-    paintTaskList(allTasks.filter(t => t.title.toLowerCase().includes(query)));
+  function handleSearch(query) {
+    const q = query.trim().toLowerCase();
+    if (!q) { paintTaskList(allTasks.slice(0, 10)); return; }
+    paintTaskList(allTasks.filter(t => t.title.toLowerCase().includes(q)));
   }
 
   function syncInputs(value) {
@@ -556,11 +617,18 @@ function setupSearch() {
 }
 
 
-/* ── 10. UTILITIES ─────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   10. UTILITIES
+════════════════════════════════════════════════════════════ */
 
+/**
+ * Escapes HTML special characters to prevent XSS.
+ * Used on every piece of user-generated content before innerHTML.
+ * @param {string} str
+ * @returns {string}
+ */
 function escHtml(str) {
-  if (!str) return '';
-  return String(str)
+  return String(str ?? '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -568,14 +636,20 @@ function escHtml(str) {
     .replace(/'/g, '&#39;');
 }
 
+/**
+ * Returns up to two initials from a name.
+ * e.g. "John Doe" → "JD",  "alice" → "AL"
+ */
 function initials(username) {
   if (!username) return '?';
   const parts = username.trim().split(/\s+/);
-  return parts.length >= 2
-    ? (parts[0][0] + parts[1][0]).toUpperCase()
-    : username.slice(0, 2).toUpperCase();
+  return (parts.length >= 2
+    ? parts[0][0] + parts[1][0]
+    : username.slice(0, 2)
+  ).toUpperCase();
 }
 
+/** Formats a date string to "21 May" style for the task list. */
 function formatDue(dateStr) {
   if (!dateStr) return '';
   const date = new Date(dateStr);
@@ -583,6 +657,7 @@ function formatDue(dateStr) {
   return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 }
 
+/** Returns true if the date has passed (ignores time). */
 function isOverdue(dateStr) {
   if (!dateStr) return false;
   return new Date(dateStr) < new Date(new Date().toDateString());
