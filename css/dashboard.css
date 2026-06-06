@@ -547,158 +547,161 @@
 
 
 /* ============================================================
-   16. RESPONSIVE
+   16. RESPONSIVE LAYOUT
    ============================================================
 
    Breakpoints:
-     4K      ≥ 2560px  — max-width container, larger type
-     Desktop  1024–2559px  — default (no query needed)
-     Tablet   768–1023px  — sidebar icon-only, 2-col stats
-     Mobile   480–767px   — no sidebar, bottom search bar
-     XS       < 480px     — single column everything
+     4K       ≥ 2560px     — constrained container width, larger typography
+     Desktop  1024–2559px  — default layout (no media query required)
+     Tablet   768–1023px   — icon-only sidebar, 2-column stats grid
+     Mobile   480–767px    — no sidebar, mobile search bar
+     XS       < 480px      — single-column layout throughout
 
-   Mobile search:
-     Αντί να κρύψουμε το search bar στο mobile, το μεταφέρουμε
-     κάτω από το topbar ως sticky search strip.
+   Mobile Search:
+     Instead of hiding the search bar on mobile devices,
+     it is moved below the topbar and displayed as a
+     sticky search strip.
    ============================================================ */
 
 
-/* ── 4K / Large screens (≥ 2560px) ─────────────────────────── */
+/* ── 4K / Large Screens (≥ 2560px) ────────────────────────── */
 @media (min-width: 2560px) {
 
   :root {
-    --sidebar-w: 300px;   /* φαρδύτερη sidebar */
-    --topbar-h:  72px;    /* ψηλότερο topbar   */
+    --sidebar-w: 300px;   /* Wider sidebar */
+    --topbar-h:  72px;    /* Taller topbar */
   }
 
-  /* Auth: περιορισμένο max-width στη φόρμα για αναγνωσιμότητα */
+  /* Auth: Limit form width for better readability */
   body.page-auth {
-    grid-template-columns: 1fr 1.2fr;  /* φόρμα ελαφρώς φαρδύτερη */
+    grid-template-columns: 1fr 1.2fr;  /* Slightly wider form */
   }
 
   .auth-container { max-width: 520px; }
 
-  /* Dashboard: μεγαλύτερα grids */
+  /* Dashboard: Larger grid layouts */
   .stats-grid    { grid-template-columns: repeat(4, 1fr); gap: var(--sp-6); }
   .projects-grid { grid-template-columns: repeat(4, 1fr); gap: var(--sp-6); }
 
-  /* Μεγαλύτερη typography */
-  .page-title         { font-size: 2rem; }
-  .stat-card__value   { font-size: 2.5rem; }
-  .project-card__title{ font-size: 1.125rem; }
+  /* Larger typography */
+  .page-title          { font-size: 2rem; }
+  .stat-card__value    { font-size: 2.5rem; }
+  .project-card__title { font-size: 1.125rem; }
 
-  /* Μεγαλύτερα cards */
+  /* Larger cards */
   .stat-card    { padding: var(--sp-6); }
   .project-card { padding: var(--sp-6); }
 
-  /* Topbar search φαρδύτερο */
+  /* Wider topbar search field */
   .topbar__search { max-width: 600px; }
 
-  /* Μεγαλύτερος scrollbar */
+  /* Larger scrollbar */
   ::-webkit-scrollbar { width: 8px; height: 8px; }
 }
 
 
-/* ── Tablet (768px – 1023px) ────────────────────────────────── */
+/* ── Tablet Layout (768px – 1023px) ───────────────────────── */
 @media (max-width: 1023px) {
 
-  /* ── Auth: single column ── */
+  /* ── Auth: Single-column layout ── */
   body.page-auth {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
     overflow: auto;
   }
 
-  .panel-hero    { padding: var(--sp-8); min-height: auto; }
-  .hero-title    { font-size: 2.2rem; }
-  .hero-desc     { display: none; }      /* κρύβει μόνο desc, κρατά features */
-  .hero-content  { margin: var(--sp-5) 0; }
-  .panel-auth    { padding: var(--sp-8) var(--sp-6) var(--sp-12); }
+  .panel-hero   { padding: var(--sp-8); min-height: auto; }
+  .hero-title   { font-size: 2.2rem; }
+  .hero-desc    { display: none; }      /* Hide description, keep feature list visible */
+  .hero-content { margin: var(--sp-5) 0; }
+  .panel-auth   { padding: var(--sp-8) var(--sp-6) var(--sp-12); }
 
-  /* ── Dashboard: icon-rail sidebar (64px) ── */
+  /* ── Dashboard: Icon-only sidebar (64px) ── */
   body.page-dashboard {
     grid-template-columns: var(--sidebar-w-closed) 1fr;
   }
 
-  /* Κρύβε text — κράτα icons */
+  /* Hide text labels and keep icons visible */
   .sidebar__brand-name,
   .sidebar__group-label,
   .sidebar__link span,
   .sidebar__badge,
   .sidebar__user-name { display: none; }
 
-  .sidebar__link  { justify-content: center; }
-  .sidebar__brand { justify-content: center; }
-  .sidebar__footer{ justify-content: center; }
+  .sidebar__link   { justify-content: center; }
+  .sidebar__brand  { justify-content: center; }
+  .sidebar__footer { justify-content: center; }
 
-  /* Stats: 2x2 */
-  .stats-grid    { grid-template-columns: repeat(2, 1fr); }
+  /* Stats grid: 2 columns */
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
 
-  /* Projects: 2 columns */
+  /* Projects grid: 2 columns */
   .projects-grid { grid-template-columns: repeat(2, 1fr); }
 
-  .main-content  { padding: var(--sp-6); gap: var(--sp-6); }
+  .main-content { padding: var(--sp-6); gap: var(--sp-6); }
 
-  /* Topbar search λίγο μικρότερο */
+  /* Slightly smaller search field */
   .topbar__search { max-width: 280px; }
 }
 
 
-/* ── Mobile search strip ────────────────────────────────────── */
+/* ── Mobile Search Strip ───────────────────────────────────── */
 /*
-  Σε mobile (< 768px) δεν κρύβουμε το search — το μεταφέρουμε
-  σε ένα sticky strip κάτω από το topbar. Χρειάζεται το
-  .mobile-search element στο dashboard.html (βλ. σχόλιο HTML).
+   On mobile devices (< 768px), the search bar is not hidden.
+   Instead, it is moved into a sticky search strip located
+   directly below the topbar.
+
+   Requires a `.mobile-search` element in dashboard.html.
 */
 .mobile-search {
-  display: none;  /* κρυφό by default (desktop) */
+  display: none;  /* Hidden by default (desktop) */
 }
 
 @media (max-width: 767px) {
 
-  /* ── Auth: single column ── */
+  /* ── Auth: Single-column layout ── */
   body.page-auth {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
     overflow: auto;
   }
 
-  .panel-hero    { padding: var(--sp-6); min-height: auto; }
-  .hero-title    { font-size: 1.8rem; }
+  .panel-hero   { padding: var(--sp-6); min-height: auto; }
+  .hero-title   { font-size: 1.8rem; }
   .hero-desc,
   .hero-features { display: none; }
-  .hero-content  { margin: var(--sp-4) 0; }
-  .hero-stat     { gap: var(--sp-6); }
-  .panel-auth    { padding: var(--sp-6) var(--sp-4) var(--sp-12); }
+  .hero-content { margin: var(--sp-4) 0; }
+  .hero-stat    { gap: var(--sp-6); }
+  .panel-auth   { padding: var(--sp-6) var(--sp-4) var(--sp-12); }
 
-  /* ── Dashboard: NO sidebar — fullscreen content ── */
+  /* ── Dashboard: Full-width content, no sidebar ── */
   body.page-dashboard {
     grid-template-columns: 1fr;
     grid-template-rows: var(--topbar-h) auto 1fr;
     grid-template-areas:
       "topbar"
-      "search"      /* νέα γραμμή για mobile search */
+      "search"      /* Dedicated row for mobile search */
       "main";
   }
 
-  /* Sidebar: κρυμμένη εντελώς, ανοίγει ως overlay με JS */
+  /* Sidebar is hidden and opened as an overlay via JavaScript */
   .sidebar {
     position: fixed;
-    left: -100%;          /* έξω από οθόνη */
+    left: -100%;          /* Off-screen */
     top: 0;
     width: var(--sidebar-w);
     height: 100dvh;
     z-index: 200;
-    transition: left .25s ease;  /* slide-in από αριστερά */
+    transition: left .25s ease;  /* Slide in from the left */
   }
 
-  /* Κλάση που βάζει το JS για να ανοίξει το overlay sidebar */
+  /* Class added by JavaScript to open the sidebar */
   .sidebar.open {
     left: 0;
     box-shadow: var(--shadow-lg);
   }
 
-  /* Overlay backdrop — κλικ κλείνει το sidebar */
+  /* Overlay backdrop — clicking it closes the sidebar */
   .sidebar-backdrop {
     display: none;
     position: fixed;
@@ -709,21 +712,21 @@
 
   .sidebar-backdrop.visible { display: block; }
 
-  /* Επαναφορά sidebar text (φαίνεται στο overlay) */
+  /* Restore sidebar labels when displayed as an overlay */
   .sidebar__brand-name,
   .sidebar__group-label,
   .sidebar__link span,
   .sidebar__badge,
   .sidebar__user-name { display: revert; }
 
-  .sidebar__link  { justify-content: flex-start; }
-  .sidebar__brand { justify-content: flex-start; }
-  .sidebar__footer{ justify-content: flex-start; }
+  .sidebar__link   { justify-content: flex-start; }
+  .sidebar__brand  { justify-content: flex-start; }
+  .sidebar__footer { justify-content: flex-start; }
 
-  /* Topbar: κρύψε desktop search */
+  /* Hide desktop search field */
   .topbar__search { display: none; }
 
-  /* Mobile search strip — εμφανίζεται κάτω από topbar */
+  /* Mobile search strip displayed below the topbar */
   .mobile-search {
     grid-area: search;
     display: flex;
@@ -766,19 +769,19 @@
 
   .mobile-search input::placeholder { color: var(--ink-faint); }
 
-  /* Main content: full width, less padding */
+  /* Main content: Full width with reduced padding */
   .main-content { padding: var(--sp-4); gap: var(--sp-5); }
 
-  /* Stats: 2x2 */
+  /* Stats grid: 2 columns */
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: var(--sp-3); }
 
-  /* Projects: 1 column */
+  /* Projects grid: Single column */
   .projects-grid { grid-template-columns: 1fr; }
 
-  /* Topbar: μικρότερα gaps */
+  /* Topbar: Reduced spacing */
   .topbar { padding: 0 var(--sp-4); gap: var(--sp-2); }
 
-  /* Sections: τίτλοι μικρότεροι */
+  /* Smaller section headings */
   .section-header h2 { font-size: 1rem; }
   .page-title        { font-size: 1.25rem; }
 }
