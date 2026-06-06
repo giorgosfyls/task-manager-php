@@ -809,9 +809,9 @@
   .stat-card         { padding: var(--sp-3); gap: var(--sp-2); }
   .stat-card__value  { font-size: 1.5rem; }
   .stat-card__icon   { width: 32px; height: 32px; }
-  .stat-card__delta  { display: none; }  /* κρύψε trend στο πολύ μικρό */
+  .stat-card__delta  { display: none; }  /* hide trend when too small */
 
-  /* Task items: μικρότερο padding */
+  /* Task items: less padding */
   .task-item { padding: var(--sp-2) var(--sp-3); }
 
   /* Project cards: compact */
