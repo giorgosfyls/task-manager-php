@@ -22,8 +22,15 @@
 
 header('Content-Type: application/json');
 
-require '../config/session_check.php';
-require '../config/db.php';
+require_once __DIR__ . '/../../config/session_check.php';
+require_once __DIR__ . '/../../config/db.php';
+
+// Ensure $pdo is available from included db.php
+if (!isset($pdo) || !($pdo instanceof PDO)) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Database connection not initialized']);
+    exit;
+}
 
 // ── Method guard ───────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

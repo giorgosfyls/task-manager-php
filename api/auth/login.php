@@ -36,11 +36,27 @@ session_set_cookie_params([
     'httponly' => true,
     'samesite' => 'Strict',
 ]);
+session_name('TASKFLOW_SESSION');
 
 // Start the session after configuration is set
 session_start();
 
 require '../config/db.php';
+
+// Support alternate PDO connection variable names in db.php
+if (!isset($pdo)) {
+    if (isset($db)) {
+        $pdo = $db;
+    } elseif (isset($conn)) {
+        $pdo = $conn;
+    }
+}
+
+if (!isset($pdo)) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Database connection not available']);
+    exit;
+}
 
 // ── Request method validation ────────────────────────────────────
 // Only POST requests allowed (GET, DELETE, etc. are rejected)

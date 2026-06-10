@@ -19,11 +19,14 @@
 
 // ── Session path configuration (must match login.php and logout.php) ─
 // Create or use existing sessions directory instead of /tmp (Windows/XAMPP compatible)
+header('Content-Type: application/json');
+
 $sessionPath = __DIR__ . '/../../sessions';
 if (!is_dir($sessionPath)) {
     mkdir($sessionPath, 0755, true);
 }
 session_save_path($sessionPath);
+session_name('TASKFLOW_SESSION');
 
 // ── Session cookie configuration ────────────────────────────────
 // Must match login.php and logout.php exactly for consistency
@@ -76,3 +79,4 @@ if (
 // Update the last activity timestamp to the current time
 // This keeps the session alive as long as the user is making requests
 $_SESSION['last_activity'] = time();
+echo json_encode(['authenticated' => true]);
