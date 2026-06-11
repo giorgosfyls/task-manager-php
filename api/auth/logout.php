@@ -36,7 +36,7 @@ session_set_cookie_params([
     'path'     => '/',
     'secure'   => false,
     'httponly' => true,
-    'samesite' => 'Strict',
+    'samesite' => 'Lax',
 ]);
 
 // Start the session (or resume existing one) to access $_SESSION
