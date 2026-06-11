@@ -185,13 +185,22 @@ document.getElementById('form-login').addEventListener('submit', async e => {
 
     const data = await res.json();
 
+    console.log('Login response status:', res.status);
+    console.log('Login response ok:', res.ok);
+    console.log('Login response data:', data);
+
     if (res.ok) {
       setMessage(msgEl, 'success', '✓ Signed in! Redirecting…');
-      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+      console.log('Login successful, redirecting to dashboard.html');
+      setTimeout(() => { 
+        console.log('Executing redirect now');
+        window.location.href = 'dashboard.html'; 
+      }, 1000);
     } else {
       setMessage(msgEl, 'error', data.error || 'Sign in failed. Please try again.');
     }
-  } catch {
+  } catch (err) {
+    console.error('Login error:', err);
     setMessage(msgEl, 'error', 'Network error. Check your connection.');
   } finally {
     setLoading(btn, false);
