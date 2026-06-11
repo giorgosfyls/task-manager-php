@@ -6,7 +6,7 @@
  * Content-Type header is set by the caller).
  *
  * Responsibilities:
- *   1. Configure session cookie (HttpOnly, SameSite=Strict)
+ *   1. Configure session cookie (HttpOnly, SameSite=Lax)
  *   2. Set up session path for persistence
  *   3. Start the session
  *   4. Reject unauthenticated requests with 401
@@ -34,13 +34,13 @@ session_name('TASKFLOW_SESSION');
 // - path: '/' = cookie available to entire website
 // - secure: false = allowed over HTTP (set to true in production for HTTPS only)
 // - httponly: true = JavaScript cannot read the cookie (mitigates XSS attacks)
-// - samesite: 'Strict' = cookie not sent on cross-origin requests (prevents CSRF attacks)
+// - samesite: 'Lax' = cookie sent on top-level navigations (allows login redirect to work)
 session_set_cookie_params([
     'lifetime' => 0,
     'path'     => '/',
     'secure'   => false,       // Set to true in production (HTTPS only)
     'httponly' => true,        // Prevents JavaScript access — mitigates XSS
-    'samesite' => 'Strict',    // Prevents CSRF via cross-site requests
+    'samesite' => 'Lax',       // Allows cookie to persist on navigation (login redirect)
 ]);
 
 // Start the session after configuration is set
