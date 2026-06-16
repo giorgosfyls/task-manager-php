@@ -1,0 +1,245 @@
+/* ============================================================
+   TaskFlow — modals.css
+   Styles for the "New Project" modal (and shared .modal-overlay
+   / .modal building blocks used by other modals, e.g. on
+   project.html).
+
+   These classes were referenced by js/dashboard.js (and
+   project.html's static markup) but had no matching rules in
+   base.css or dashboard.css, so the modal rendered completely
+   unstyled. Add this file's <link> tag after dashboard.css /
+   kanban.css on every page that opens a modal.
+
+   Depends on: base.css (CSS variables must be loaded first)
+   ============================================================ */
+
+
+/* ── Overlay (backdrop) ───────────────────────────────────── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 15, 20, .48);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-4);
+  z-index: 300;
+  animation: modal-fade-in .18s ease;
+}
+
+.modal-overlay[hidden] { display: none; }
+
+@keyframes modal-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+
+/* ── Modal card ───────────────────────────────────────────── */
+
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 440px;
+  max-height: calc(100dvh - var(--sp-8));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modal-pop-in .2s cubic-bezier(.16, 1, .3, 1);
+}
+
+/* Wider variant used by the task-detail modal on project.html */
+.modal-overlay--wide .modal,
+.modal--detail {
+  max-width: 720px;
+}
+
+@keyframes modal-pop-in {
+  from { opacity: 0; transform: translateY(8px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);  }
+}
+
+
+/* ── Header ───────────────────────────────────────────────── */
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-5) var(--sp-5) var(--sp-4);
+  border-bottom: 1px solid var(--line-soft);
+  flex-shrink: 0;
+}
+
+.modal__title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -.01em;
+}
+
+.modal__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+  color: var(--ink-soft);
+  flex-shrink: 0;
+  transition: background .15s, color .15s;
+}
+
+.modal__close:hover { background: var(--surface-2); color: var(--ink); }
+.modal__close svg   { width: 18px; height: 18px; stroke: currentColor; }
+
+
+/* ── Body ─────────────────────────────────────────────────── */
+
+.modal__body {
+  padding: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  overflow-y: auto;
+}
+
+/* Form field — shared across the New Project + Task modals */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.field label {
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--ink-mid);
+}
+
+.field-wrap { position: relative; }
+
+.field input[type="text"],
+.field input[type="date"],
+.field textarea,
+.field select,
+.modal input[type="text"],
+.modal input[type="date"],
+.modal textarea,
+.modal select {
+  width: 100%;
+  padding: .6rem .75rem;
+  border: 1.5px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .9rem;
+  color: var(--ink);
+  background: var(--surface-2);
+  outline: none;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+.field textarea,
+.modal textarea {
+  resize: vertical;
+  min-height: 72px;
+  line-height: 1.5;
+}
+
+.field input::placeholder,
+.field textarea::placeholder,
+.modal input::placeholder,
+.modal textarea::placeholder {
+  color: var(--ink-faint);
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus,
+.modal input:focus,
+.modal textarea:focus,
+.modal select:focus {
+  background: var(--surface);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+/* Error state */
+.field input.error,
+.modal input.error {
+  border-color: var(--red);
+}
+
+.field input.error:focus,
+.modal input.error:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, .15);
+}
+
+.field-error {
+  font-size: .78rem;
+  color: var(--red);
+  min-height: 1em;
+}
+
+
+/* ── Footer ───────────────────────────────────────────────── */
+
+.modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5);
+  border-top: 1px solid var(--line-soft);
+  flex-shrink: 0;
+}
+
+
+/* ── Submit button loading state ─────────────────────────── */
+
+.btn-sm .spinner {
+  display: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spinner-spin .6s linear infinite;
+}
+
+.btn-sm.loading {
+  cursor: default;
+  opacity: .85;
+}
+
+.btn-sm.loading .btn-label { opacity: .6; }
+.btn-sm.loading .spinner   { display: inline-block; }
+
+@keyframes spinner-spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .modal-overlay { padding: var(--sp-3); align-items: flex-end; }
+
+  .modal {
+    max-width: 100%;
+    max-height: calc(100dvh - var(--sp-6));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .modal__header,
+  .modal__body,
+  .modal__footer { padding-left: var(--sp-4); padding-right: var(--sp-4); }
+}
