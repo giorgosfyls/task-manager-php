@@ -14,6 +14,7 @@
    <link rel="stylesheet" href="css/auth.css">
    <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/modals.css">
 </head>
 <body class="page-dashboard">
 
@@ -157,10 +158,10 @@
 
   <!-- ═══════════════════════════════════════
        MOBILE SEARCH STRIP
-       Κρυμμένο σε desktop/tablet — εμφανίζεται
-       κάτω από topbar σε mobile (< 768px).
-       Το id="mobile-search-input" ελέγχεται
-       από το ίδιο setupSearch() στο dashboard.js.
+       Hidden on desktop/tablet — displayed
+       under the topbar on mobile (< 768px).
+       The id="mobile-search-input" is controlled
+       by the same setupSearch() in dashboard.js.
   ═══════════════════════════════════════ -->
   <div class="mobile-search" role="search" aria-label="Mobile search">
     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -175,7 +176,7 @@
     />
   </div>
 
-  <!-- Sidebar backdrop — κλικ κλείνει το overlay sidebar σε mobile -->
+  <!-- Sidebar backdrop — clicking closes the overlay sidebar on mobile -->
   <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
 
 

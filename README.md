@@ -121,7 +121,6 @@ task-manager-php/
 │   ├── base.css            # CSS variables, reset, typography, layouts
 │   ├── auth.css            # Login / Register page styles
 │   ├── dashboard.css       # Dashboard + sidebar + topbar styles
-│   ├── modals.css          # CSS for modals
 │   └── kanban.css          # Kanban board, task cards, modal, comments
 │
 ├── js/
