@@ -28,13 +28,13 @@ header('Content-Type: application/json');
 // Configure how the session cookie behaves in the browser
 // - lifetime: 0 = expires when browser closes
 // - httponly: true = JavaScript cannot access the cookie (mitigates XSS)
-// - samesite: Lax = cookie sent on top-level navigations (allows login redirect)
+// - samesite: Strict = cookie not sent on cross-origin requests (prevents CSRF)
 session_set_cookie_params([
     'lifetime' => 0,
     'path'     => '/',
     'secure'   => false,    // Change to true in production (HTTPS only)
     'httponly' => true,
-    'samesite' => 'Lax',
+    'samesite' => 'Strict',
 ]);
 session_name('TASKFLOW_SESSION');
 
