@@ -19,6 +19,7 @@ header('Content-Type: application/json');
 
 require '../config/session_check.php';
 require '../config/db.php';
+/** @var PDO $pdo */
 
 $userId = (int) $_SESSION['user_id'];
 $method = $_SERVER['REQUEST_METHOD'];

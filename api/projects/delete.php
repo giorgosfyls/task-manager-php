@@ -20,6 +20,7 @@ header('Content-Type: application/json');
 
 require '../config/session_check.php';
 require '../config/db.php';
+/** @var PDO $pdo */
 
 // ── Method guard ───────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
