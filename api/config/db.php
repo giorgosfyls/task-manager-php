@@ -40,11 +40,3 @@ try {
     echo json_encode(['error' => 'Database connection failed. Please try again later.']);
     exit;
 }
-
-$pdo = new PDO($dsn, DB_USER, DB_PASS, [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-]);
-
-global $pdo;
