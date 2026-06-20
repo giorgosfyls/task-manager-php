@@ -8,7 +8,7 @@
 
 /* ── Design tokens (shared with base.css) ─────────────────── */
 :root {
-  --col-todo:         #3b82f6;   /* blue      */
+  --col-todo:        #3b82f6;   /* blue      */
   --col-progress:    #f59e0b;   /* orange    */
   --col-done:        #22c55e;   /* green     */
 
@@ -25,92 +25,6 @@
   --modal-overlay:   rgba(15,23,42,.55);
   --radius-card:     10px;
   --radius-col:      14px;
-}
-
-
-/* ════════════════════════════════════════════════════════════
-   TOPBAR & HEADER FIXES (Resolves layout overlap)
-════════════════════════════════════════════════════════════ */
-
-/* Fixes the main topbar container and its inner icons */
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 var(--sp-6, 1.5rem);
-  background: #ffffff;
-  border-bottom: 1px solid var(--card-border, #e2e8f0);
-  height: var(--topbar-h, 60px);
-  box-sizing: border-box;
-}
-
-/* Ensure buttons/icons inside topbar don't collapse into lines */
-.topbar button, 
-.topbar__action,
-.topbar__user {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
-
-/* Flex wrapper for the breadcrumb and actions row below the topbar */
-.main-content__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  width: 100%;
-}
-
-/* Search input styling to prevent default raw borders */
-.search-wrapper {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.search-wrapper input {
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  border: 1px solid var(--card-border, #e2e8f0);
-  border-radius: 6px;
-  outline: none;
-  font-family: 'DM Sans', sans-serif;
-  width: 200px;
-  transition: border-color 0.2s;
-}
-
-.search-wrapper input:focus {
-  border-color: var(--accent, #e8490f);
-}
-
-/* Standardized action buttons (like the "New Task" button) */
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: var(--accent, #e8490f);
-  color: #ffffff;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s;
-  white-space: nowrap;
-}
-
-.btn-primary:hover {
-  background: #d03e0a; /* Slightly darker tone for hover */
 }
 
 
@@ -254,16 +168,18 @@
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-card);
-  padding: .85rem 1rem;
+  padding: .9rem 1rem;
   cursor: pointer;           /* pointer so whole card is clickable */
   box-shadow: var(--card-shadow);
-  transition: box-shadow .2s, transform .15s, opacity .2s;
+  transition: box-shadow .2s, transform .15s, opacity .2s, border-color .2s;
   position: relative;
   user-select: none;
   list-style: none;
 }
 .task-card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+  box-shadow: 0 6px 16px rgba(15,23,42,.10);
+  border-color: #d8dee8;
+  transform: translateY(-1px);
 }
 .task-card[draggable="true"] { cursor: grab; }
 .task-card.dragging {
@@ -283,8 +199,9 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: .5rem;
-  margin-bottom: .5rem;
+  gap: .65rem;
+  margin-bottom: .55rem;
+  padding-right: 1.6rem;  /* space so that the title is not hidden underneath the action buttons */
 }
 .task-card__title {
   font-size: .9rem;
@@ -293,6 +210,7 @@
   line-height: 1.4;
   flex: 1;
   margin: 0;
+  word-break: break-word;
 }
 
 /* Priority badge */
@@ -340,33 +258,39 @@
   flex-shrink: 0;
 }
 
-/* Action buttons (visible on hover) */
+/* Action buttons — visible only on hover/focus, top right */
 .task-card__actions {
   display: flex;
-  gap: .25rem;
+  gap: .3rem;
   position: absolute;
-  top: .6rem; right: .6rem;
+  top: .7rem; right: .7rem;
   opacity: 0;
+  transform: translateY(-2px);
   pointer-events: none;
-  transition: opacity .2s;
+  transition: opacity .15s, transform .15s;
 }
 .task-card:hover .task-card__actions,
-.task-card:focus-within .task-card__actions { opacity: 1; pointer-events: auto; }
+.task-card:focus-within .task-card__actions {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
 
 .task-card__btn {
-  width: 26px; height: 26px;
+  width: 24px; height: 24px;
   border-radius: 6px;
   border: none;
-  background: var(--col-bg);
+  background: var(--card-bg);
+  box-shadow: 0 1px 3px rgba(0,0,0,.10);
   color: var(--text-muted, #94a3b8);
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  transition: background .15s, color .15s;
+  transition: background .15s, color .15s, box-shadow .15s;
   padding: 0;
 }
-.task-card__btn svg              { width: 13px; height: 13px; }
-.task-card__btn:hover            { background: var(--card-border); color: var(--text-main, #0f172a); }
-.task-card__btn--delete:hover    { background: rgba(239,68,68,.12); color: var(--priority-high); }
+.task-card__btn svg              { width: 12px; height: 12px; stroke-width: 2; }
+.task-card__btn:hover            { background: var(--col-bg); color: var(--text-main, #0f172a); box-shadow: 0 2px 6px rgba(0,0,0,.14); }
+.task-card__btn--delete:hover    { background: #fef2f2; color: var(--priority-high); }
 
 
 /* ════════════════════════════════════════════════════════════
@@ -754,9 +678,283 @@
 
 
 /* ════════════════════════════════════════════════════════════
-   RESPONSIVE  (< 768px)
+   LAYOUT — body.page-kanban grid (sidebar + topbar + main)
+   ════════════════════════════════════════════════════════════
+
+   FIX: project.html does not load dashboard.css, so:
+     a) there was NO grid layout layout at all for body.page-kanban
+     b) there was no visual styling (background, padding, width)
+        for .sidebar / .topbar, since those lived exclusively in
+        dashboard.css
+
+   This block makes kanban.css autonomous: it duplicates the same
+   grid pattern + basic sidebar/topbar styling required by
+   project.html, without relying on dashboard.css.
+
+   IMPORTANT: all media queries in this file now use the EXACT SAME
+   breakpoint (767px) to avoid any asymmetrical zones between
+   767px-768px where the layout breaks down.
+   ════════════════════════════════════════════════════════════ */
+
+body.page-kanban {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: var(--sidebar-w, 240px) 1fr;
+  grid-template-rows: var(--topbar-h, 60px) 1fr;
+  grid-template-areas:
+    "sidebar topbar"
+    "sidebar main";
+  background: var(--bg, #f2f0eb);
+  transition: grid-template-columns .25s ease;
+}
+
+body.page-kanban.sidebar-collapsed {
+  grid-template-columns: var(--sidebar-w-closed, 64px) 1fr;
+}
+
+/* ── Sidebar: basic visual styling (background, sizing) ──── */
+.sidebar {
+  grid-area: sidebar;
+  background: #0d0f14;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow-y: auto;
+  padding: var(--sp-4, 1rem) var(--sp-3, .75rem);
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3, .75rem);
+  padding: var(--sp-2, .5rem) var(--sp-2, .5rem) var(--sp-5, 1.25rem);
+  flex-shrink: 0;
+}
+.sidebar__brand-mark {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-sm, 6px);
+  background: var(--accent, #e8490f);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.sidebar__brand-mark svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 2.5; }
+.sidebar__brand-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1, .25rem);
+  flex: 1;
+}
+.sidebar__group-label {
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.35);
+  padding: var(--sp-4, 1rem) var(--sp-3, .75rem) var(--sp-2, .5rem);
+}
+.sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3, .75rem);
+  padding: .55rem var(--sp-3, .75rem);
+  border-radius: var(--radius-sm, 6px);
+  color: rgba(255,255,255,.6);
+  font-size: .875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background .15s, color .15s;
+}
+.sidebar__link svg   { width: 18px; height: 18px; stroke: currentColor; flex-shrink: 0; }
+.sidebar__link:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.85); text-decoration: none; }
+.sidebar__link.active{ background: var(--accent, #e8490f); color: #fff; }
+.sidebar__badge {
+  margin-left: auto;
+  background: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.7);
+  font-size: .7rem;
+  font-weight: 600;
+  padding: .1rem .45rem;
+  border-radius: var(--radius-full, 9999px);
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+.sidebar__link.active .sidebar__badge { background: rgba(255,255,255,.25); color: #fff; }
+
+.sidebar__footer {
+  padding: var(--sp-4, 1rem) var(--sp-3, .75rem);
+  border-top: 1px solid rgba(255,255,255,.06);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3, .75rem);
+  flex-shrink: 0;
+}
+.sidebar__avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--accent, #e8490f);
+  display: grid;
+  place-items: center;
+  font-family: 'Syne', sans-serif;
+  font-size: .75rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.sidebar__user-name {
+  font-size: .875rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Topbar: basic visual styling ──────────────────────────── */
+.topbar {
+  grid-area: topbar;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4, 1rem);
+  padding: 0 var(--sp-6, 1.5rem);
+  background: var(--surface, #fff);
+  border-bottom: 1px solid var(--line-soft, #ebe8e2);
+}
+.topbar__toggle {
+  background: none; border: none; cursor: pointer;
+  padding: var(--sp-2, .5rem);
+  color: var(--ink-soft, #7a7f8e);
+  display: grid; place-items: center;
+  border-radius: var(--radius-sm, 6px);
+  transition: background .15s, color .15s;
+  flex-shrink: 0;
+}
+.topbar__toggle:hover { background: var(--surface-2, #f7f6f3); color: var(--ink, #0d0f14); }
+.topbar__toggle svg   { width: 20px; height: 20px; stroke: currentColor; }
+
+.topbar__search { flex: 1; max-width: 400px; position: relative; }
+.topbar__search svg {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; stroke: var(--ink-soft, #7a7f8e);
+  pointer-events: none;
+}
+.topbar__search input {
+  width: 100%;
+  padding: .45rem .75rem .45rem 2.2rem;
+  border: 1.5px solid var(--line-soft, #ebe8e2);
+  border-radius: var(--radius-sm, 6px);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .875rem;
+  color: var(--ink, #0d0f14);
+  background: var(--surface-2, #f7f6f3);
+  outline: none;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+.topbar__search input:focus {
+  background: var(--surface, #fff);
+  border-color: var(--accent, #e8490f);
+  box-shadow: 0 0 0 3px var(--accent-dim, #f0613030);
+}
+
+.topbar__actions { display: flex; align-items: center; gap: var(--sp-2, .5rem); margin-left: auto; }
+.topbar__btn {
+  background: none; border: none; cursor: pointer;
+  width: 36px; height: 36px;
+  border-radius: var(--radius-sm, 6px);
+  display: grid; place-items: center;
+  color: var(--ink-soft, #7a7f8e);
+  transition: background .15s, color .15s;
+  position: relative;
+}
+.topbar__btn:hover { background: var(--surface-2, #f7f6f3); color: var(--ink, #0d0f14); }
+.topbar__btn svg   { width: 20px; height: 20px; stroke: currentColor; }
+.topbar__btn--notify::after {
+  content: '';
+  position: absolute; top: 7px; right: 7px;
+  width: 7px; height: 7px;
+  background: var(--accent, #e8490f);
+  border-radius: 50%;
+  border: 1.5px solid var(--surface, #fff);
+}
+.topbar__avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--accent, #e8490f);
+  display: grid; place-items: center;
+  font-family: 'Syne', sans-serif;
+  font-size: .75rem; font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ── Main content area ──────────────────────────────────────── */
+.main-content {
+  grid-area: main;
+  padding: var(--sp-6, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6, 1.5rem);
+  overflow-y: auto;
+}
+
+/* ── btn-sm (shared button style, normally lives in dashboard.css) ── */
+.btn-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2, .5rem);
+  padding: .45rem .9rem;
+  background: var(--accent, #e8490f);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm, 6px);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, box-shadow .2s, transform .15s;
+}
+.btn-sm:hover {
+  background: var(--accent-hover, #d13d08);
+  box-shadow: 0 2px 12px rgba(232,73,15,.35);
+  transform: translateY(-1px);
+}
+.btn-sm svg { width: 14px; height: 14px; stroke: currentColor; }
+.btn-sm--ghost {
+  background: transparent;
+  color: var(--ink-soft, #7a7f8e);
+  border: 1.5px solid var(--line, #d8d4cc);
+}
+.btn-sm--ghost:hover {
+  background: var(--surface-2, #f7f6f3);
+  color: var(--ink, #0d0f14);
+  box-shadow: none;
+  transform: none;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-4, 1rem);
+}
+
+.sidebar-backdrop { display: none; }
+
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE  (< 768px) — UNIFIED 767px breakpoint everywhere
 ════════════════════════════════════════════════════════════ */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
+
   /* Kanban columns stack vertically */
   .kanban-board   { flex-direction: column; overflow-x: visible; }
   .kanban-column  { flex: none; width: 100%; }
@@ -768,67 +966,28 @@
   .modal--detail__body    { grid-template-columns: 1fr; }
   .modal--detail__fields  { border-right: none; border-bottom: 1px solid var(--card-border); }
   .comment-list           { max-height: 200px; }
-}
 
-
-/* ════════════════════════════════════════════════════════════
-   PAGE LAYOUT & SIDEBAR CONTEXT
-════════════════════════════════════════════════════════════ */
-
-body.page-kanban {
-  min-height: 100dvh;
-  display: grid;
-  grid-template-columns: var(--sidebar-w) 1fr;
-  grid-template-rows: var(--topbar-h) 1fr;
-  grid-template-areas:
-    "sidebar topbar"
-    "sidebar main";
-  background: var(--bg);
-  transition: grid-template-columns .25s ease;
-}
- 
-body.page-kanban.sidebar-collapsed {
-  grid-template-columns: var(--sidebar-w-closed) 1fr;
-}
- 
-/* Position essential sections inside the grid areas.
-   These selectors already exist in dashboard via dashboard.css;
-   we redeclare them here so that kanban.css is autonomous 
-   and functions correctly even if loaded without dashboard.css. */
-.sidebar  { grid-area: sidebar; }
-.topbar   { grid-area: topbar;  }
-.main-content {
-  grid-area: main;
-  padding: var(--sp-6);
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-6);
-  overflow-y: auto;
-}
- 
-/* Mobile: Same pattern as the dashboard — sidebar becomes 
-   an off-canvas drawer, main takes up the entire width. */
-@media (max-width: 767px) {
+  /* Layout: sidebar becomes an off-canvas drawer */
   body.page-kanban {
     grid-template-columns: 1fr;
-    grid-template-rows: var(--topbar-h) 1fr;
+    grid-template-rows: var(--topbar-h, 60px) 1fr;
     grid-template-areas:
       "topbar"
       "main";
   }
- 
+
   .sidebar {
     position: fixed;
     left: -100%;
     top: 0;
-    width: var(--sidebar-w);
+    width: var(--sidebar-w, 240px);
     height: 100dvh;
     z-index: 200;
     transition: left .25s ease;
   }
- 
-  .sidebar.open { left: 0; box-shadow: var(--shadow-lg); }
- 
+
+  .sidebar.open { left: 0; box-shadow: var(--shadow-lg, 0 4px 16px rgba(0,0,0,.08)); }
+
   .sidebar-backdrop {
     display: none;
     position: fixed;
@@ -837,6 +996,8 @@ body.page-kanban.sidebar-collapsed {
     z-index: 199;
   }
   .sidebar-backdrop.visible { display: block; }
- 
-  .main-content { padding: var(--sp-4); gap: var(--sp-5); }
+
+  .main-content { padding: var(--sp-4, 1rem); gap: var(--sp-5, 1.25rem); }
+
+  .topbar__search { display: none; }
 }
